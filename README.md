@@ -22,4 +22,10 @@ Raw" after navigating to the file in the proper directory.  This will
 download the document to your local machine.  Same goes for the `R`
 script.
 
+# Org mode notes
 
+If you are running the `.org` files, you may run into a situation when
+you'll need to reload org-mode to properly view the code output, which
+can be done with `C-u M-x org-reload`.  If you are adding a code
+block, then a neat shortcut is `<s TAB`, which will delineate a code
+block within the org file.  Then, to tangle the code, hit `C-c C-v t`.

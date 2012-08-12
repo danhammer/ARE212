@@ -4,47 +4,20 @@
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
-#+LATEX: \newcommand{\sss}{$s^2$ }
 #+LATEX: \newcommand{\Rs}{\texttt{R} }
 #+LATEX: \newcommand{\R}{\texttt{R}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
-#+LATEX: \renewcommand{\yp}{{\bf y}^\prime}
-#+LATEX: \renewcommand{\y}{{\bf y}}
-#+LATEX: \renewcommand{\X}{{\bf X}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
 #+LATEX: \renewcommand{\B}{{\bf B}}
 #+LATEX: \renewcommand{\A}{{\bf A}}
 #+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
 #+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
-#+LATEX: \renewcommand{\P}{{\bf P}}
-#+LATEX: \renewcommand{\Pp}{{\bf P}^{\prime}}
-#+LATEX: \renewcommand{\C}{{\bf C}}
-#+LATEX: \renewcommand{\Cp}{{\bf C}^{\prime}}
-#+LATEX: \renewcommand{\b}{{\bf b}}
-#+LATEX: \renewcommand{\Xp}{{\bf X}^\prime}
-#+LATEX: \renewcommand{\Xs}{{\bf X}^{*}}
-#+LATEX: \renewcommand{\Xsp}{{\bf X}^{*\prime}}
-#+LATEX: \renewcommand{\eps}{{\bf \epsilon}}
-#+LATEX: \renewcommand{\epsp}{{\bf \epsilon}^\prime}
-#+LATEX: \renewcommand{\Om}{{\bf \Omega}}
-#+LATEX: \renewcommand{\Ominv}{{\bf \Omega}^{-1}}
-#+LATEX: \renewcommand{\E}{\mathbb{E}}
-#+LATEX: \renewcommand{\V}{\mathbb{V}}
-#+LATEX: \renewcommand{\sigs}{\sigma^2}
-#+LATEX: \renewcommand{\sigsh}{\hat{\sigma}^2}
-#+LATEX: \renewcommand{\N}{\mathcal{N}}
-#+LATEX: \renewcommand{\bh}{\hat{\beta}}
-#+LATEX: \renewcommand{\gh}{\hat{\gamma}}
-#+LATEX: \renewcommand{\yt}{\tilde{{\bf y}}}
-#+LATEX: \renewcommand{\Xt}{\tilde{{\bf X}}}
-#+LATEX: \renewcommand{\x}{{\bf x}}
-#+LATEX: \renewcommand{\epst}{\tilde{{\bf \epsilon}}}
-#+LATEX: \renewcommand{\rxz}{\rho_{xz}}
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \renewcommand{\k}{\noindent}
 #+STARTUP: fninline
+#+BABEL: :session *R* :cache yes :results output graphics :exports both :tangle yes
 
 \noindent This section is meant to give a brief introduction to data
 manipulation in \R, and specifically to the type of data work that
