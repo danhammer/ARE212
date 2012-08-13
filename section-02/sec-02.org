@@ -1,7 +1,6 @@
 #+AUTHOR:      Dan Hammer
 #+TITLE:       ARE212: Section 02
 #+OPTIONS:     toc:nil num:nil 
-
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
@@ -10,23 +9,33 @@
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
-#+LATEX: \renewcommand{\B}{{\bf B}}
-#+LATEX: \renewcommand{\A}{{\bf A}}
-#+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
-#+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \renewcommand{\k}{\noindent}
 #+STARTUP: fninline
 
+This section is intended to introduce linear regression in \R.  The
+first step is to read the data set \code{auto.csv} from the relative
+path.  You can also download it from [[https://github.com/danhammer/ARE212/blob/master/data/auto.csv][here]].  We set the option
+\code{header} to \code{TRUE}, which treats the first line of the CSV
+file as variable names, rather than an observation.
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  path <- "http://dl.dropbox.com/u/5365589/ARE212/auto.csv"
-  data <- read.csv(path, header=TRUE)
-  class(data)
+  data <- read.csv("../data/auto.csv", header=TRUE)
 #+end_src
 
 #+RESULTS:
-: [1] "data.frame"
+
+\k We can read the names from the data set; but they aren't much help.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   names(data)
@@ -35,11 +44,48 @@
 #+RESULTS:
 : [1] "V1" "V2" "V3"
 
+\k We can replace the column headers with more descriptive variable
+names.  The next command is an example of destructuring.  There are
+three elements in both the original and new list; and each element in
+the original list is reassigned based on its position in the list,
+e.g., the \code{V1} header is replaced by \code{price}.
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
   names(data) <- c("price", "mpg", "weight")
 #+end_src
 
 #+RESULTS:
+
+\k To get a sense of the data, list the first six observations:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  head(data)
+#+end_src
+
+#+RESULTS:
+:   price mpg weight
+: 1  4099  22   2930
+: 2  4749  17   3350
+: 3  3799  22   2640
+: 4  4816  20   3250
+: 5  7827  15   4080
+: 6  5788  18   3670
+
+\k With the columns appropriately names, we can refer to particular
+variables within the data set using the unique indexing in \R, where
+data objects tend to be variants of lists and nested lists.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  head(data$mpg)
+#+end_src
+
+#+RESULTS:
+: [1] 22 17 22 20 15 18
+
+\k Now for the analysis, a linear model using \code{lm()}.  We specify
+the model by referring to the column headers within the specified data
+set --- along with a 1 to indicate a column of ones. \Rs is unique for
+intelligently snapping the dimensions of comparable matrices.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   lm(price ~ 1 + mpg + weight, data=data)
@@ -54,12 +100,11 @@
 : (Intercept)          mpg       weight  
 :    1946.069      -49.512        1.747
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  head(data$mpg)
-#+end_src
-
-#+RESULTS:
-: [1] 22 17 22 20 15 18
+\k Note that we do not need to refer to the data set in calling a
+vector, e.g., \code{data\$price}.  Instead, we "attach" the data
+within the linear model.  We can do the same thing for the \Rs
+session, which tends to simplify notation.  The columns can be
+referenced directly after the data set has been attached.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   attach(data)
@@ -69,6 +114,15 @@
 #+RESULTS:
 : [1] 22 17 22 20 15 18
 
+\k The use of *canned* routines is not permitted for most of this
+class; you'll have to write the econometric routines from first
+principles.  First, create matrices of the data, since we will be
+working mainly with matrix operations.  Let $\y$ be the dependent
+variable, price, and let $\X$ be a matrix of the other car
+characteristics, along with a column of ones prepended.  The
+\code{cbind()} function binds the columns horizontally and coerces the
+\code{matrix} class.
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
   y <- matrix(price)
   X <- cbind(1, mpg, weight)
@@ -76,12 +130,18 @@
 
 #+RESULTS:
 
+\k Check that the number of observations are the same in both the
+dependent vector $\y$ and the cofactor matrix $\X$.
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
 dim(X)[1] == nrow(y)
 #+end_src
 
 #+RESULTS:
 : [1] TRUE
+
+\k Using the matrix operations described in the previous section, we
+can quickly estimate the ordinary least squared parameter vector. 
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
 beta <- solve(t(X) %*% X) %*% t(X) %*% y
@@ -94,6 +154,11 @@ print(beta)
 : mpg     -49.512221
 : weight    1.746559
 
+\k This vector matches the coefficient vector from the canned routine,
+thankfully.  Digging deeper into the numbers, consider the projection
+matrix $\P = \X(\Xp\X)^{-1}\Xp$ and the residual maker matrix $\M =
+\In - \P$
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
 n <- nrow(y)
 P <- X %*% solve(t(X) %*% X) %*% t(X)
@@ -102,14 +167,33 @@ M <- diag(n) - P
 
 #+RESULTS:
 
+\k \Rs is useful for checking the properties of these matrices,
+including whether $\M$ is symmetric, that is, whether $\M = \Mp$.  The
+function \code{all.equal()} does not test *exact* equality, but
+instead whether the supplied objects are "close enough" to be
+considered the same.  The problem is the limits of machine precision,
+and rounding at the tail ends of floating point numbers.
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(M, t(M))
-all.equal(M, t(M), tol=0)
 #+end_src
 
 #+RESULTS:
 : [1] TRUE
+
+\k If we want to test for exact equality, we set the tolerance to
+zero, and the function will return a message with the mean relative
+difference between elements --- which is clearly very close to zero.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+all.equal(M, t(M), tol=0)
+#+end_src
+
+#+RESULTS:
 : [1] "Mean relative difference: 7.266263e-15"
+
+\k The residual maker matrix should also be idempotent, or $\M =
+\M\Mp$.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(M, M %*% t(M))
@@ -118,18 +202,30 @@ all.equal(M, M %*% t(M))
 #+RESULTS:
 : [1] TRUE
 
+\k Finally, we can examine the different components of the variation
+in the dependent variable, as they relate to the OLS estimate.
+Specifically, we can show that the total sum of square is equal to the
+sum of the residual and estimated sum of squares: 
+\begin{equation}
+\label{eq:ss}
+\yp\y = \yhp\yh + \ep\e
+\end{equation}
+First, define the relevant variables:
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
 e <- M %*% y
 y.hat <- P %*% y
+rss <- t(e) %*% e
+ess <- t(y.hat) %*% y.hat
+tss <- t(y) %*% y
 #+end_src
 
 #+RESULTS:
 
+\k Then check the condition in Eq. (\ref{eq:ss}):
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
-rss <- t(e) %*% e
-ess <- t(y.hat) %*% y.hat
-tss <- t(y) %*% y
-all.equal(tss, rss + ess)
+all.equal(tss, ess + rss)
 #+end_src
 
 #+RESULTS:

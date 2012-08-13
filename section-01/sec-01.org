@@ -17,7 +17,6 @@
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \renewcommand{\k}{\noindent}
 #+STARTUP: fninline
-#+BABEL: :session *R* :cache yes :results output graphics :exports both :tangle yes
 
 \noindent This section is meant to give a brief introduction to data
 manipulation in \R, and specifically to the type of data work that
