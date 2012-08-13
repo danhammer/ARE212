@@ -1,0 +1,77 @@
+#+AUTHOR:      Dan Hammer
+#+TITLE:       ARE212: Section 04
+#+OPTIONS:     toc:nil num:nil 
+#+LATEX_HEADER: \usepackage{mathrsfs}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX: \newcommand{\Rs}{\texttt{R} }
+#+LATEX: \newcommand{\R}{\texttt{R}}
+#+LATEX: \newcommand{\Rsq}{R^{2}}
+#+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\b}{{\bf b}}
+#+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
+#+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
+#+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\C}{{\bf C}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Xsp}{{\bf X}^{*\prime}}
+#+LATEX: \renewcommand{\Xs}{{\bf X}^{*}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\ys}{{\bf y}^{*}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\ysp}{{\bf y}^{*\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \renewcommand{\sigs}{\sigma^{2}}
+#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
+#+LATEX: \setlength{\parindent}{0in}
+#+STARTUP: fninline
+
+This is an introducton to basic hypothesis testing in \R. We have
+shown that, with a certain set of assumptions, the difference between
+the OLS estimator and the true parameter vector is distributed
+normally as shown in expression (2.63): $$(\b - \beta)|\X \sim N({\bf
+0}, \hspace{4pt} \sigs \cdot (\Xp\X)^{-1})$$ We have also shown that
+$s^2 = \ep\e/(n-k)$ is an unbiased estimator of $\sigs$ in Section
+2.3.4 of the lecture notes. The purpose of the section is not to
+rehash the lectures, but instead to use the results to practice
+indexing in \R.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  data <- read.csv("../data/auto.csv", header=TRUE)
+  names(data) <- c("price", "mpg", "weight")
+  y <- matrix(data$price)
+  X <- cbind(1, data$mpg, data$weight)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  n <- nrow(X); k <- ncol(X)
+  P <- X %*% solve(t(X) %*% X) %*% t(X)
+  e <- (diag(n) - P) %*% y
+  s2 <- t(e) %*% e / (n - k)
+  print(s2)
+#+end_src
+
+#+RESULTS:
+:         [,1]
+: [1,] 6320340
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  vcov.mat <- as.numeric(s2) * solve(t(X) %*% X)
+  se.vec <- diag(vcov.mat)
+  se.vec
+#+end_src
+
+#+RESULTS:
+: [1] 1.293877e+07 7.422863e+03 4.113347e-01
+
