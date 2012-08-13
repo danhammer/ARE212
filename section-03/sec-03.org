@@ -127,9 +127,9 @@ dependent vector and associated cofactor matrix:
   R.squared <- function(y, X) {
     n <- nrow(X)
     A <- demean.mat(n)
-    xtax <- t(X2) %*% A %*% X2
+    xtax <- t(X) %*% A %*% X
     ytay <- t(y) %*% A %*% y
-    b2 <- solve(xtax) %*% t(X2) %*% A %*% y
+    b2 <- solve(xtax) %*% t(X) %*% A %*% y
     t(b2) %*% xtax %*% b2 / ytay
   }
   
@@ -140,6 +140,27 @@ dependent vector and associated cofactor matrix:
 :           [,1]
 : [1,] 0.2933891
 
-The $\Rsq$ value is an increasing function of the number of cofactors,
-the number of columns of matrix $\X$.  Without some adjustment for the
-number of variables, the $\Rsq$
+Without some penalty for addtional cofactors, the $\Rsq$ will
+monotonically increase with the number of columns in the cofactor
+matrix $\X$.  We can plot this function, mostly as an introduction to
+very simple plots in \R. 
+
+#+begin_src R :results output graphics :exports both :file inserts/graph1.png :tangle yes :session
+  n <- nrow(X2)
+  X.rnd <- random.mat(n, 70)
+  res <- rep(0, 70)
+  for(i in 1:70) {
+    X.ext <- cbind(X2, X.rnd[, 1:i])
+    res[i] <- R.squared(y, X.ext)
+  }
+  plot(res)
+#+end_src
+
+#+RESULTS:
+[[file:inserts/graph1.png]]
+
+It may be difficult to get a sense of the shape of the curve based on
+a single draw for the random matrix.  We can calculate the
+relationship between $\Rsq$ and the number of cofactors --- or we can
+bootstrap an estimate for each index, which we will do in a subsequent
+section to illustrate bootstrapping in \R.
