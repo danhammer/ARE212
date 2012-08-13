@@ -9,16 +9,24 @@
 #+LATEX: \newcommand{\Rsq}{R^{2}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\b}{{\bf b}}
+#+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
+#+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
 #+LATEX: \renewcommand{\X}{{\bf X}}
 #+LATEX: \renewcommand{\M}{{\bf M}}
 #+LATEX: \renewcommand{\A}{{\bf A}}
 #+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\C}{{\bf C}}
 #+LATEX: \renewcommand{\P}{{\bf P}}
 #+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Xsp}{{\bf X}^{*\prime}}
+#+LATEX: \renewcommand{\Xs}{{\bf X}^{*}}
 #+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
 #+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\ys}{{\bf y}^{*}}
 #+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\ysp}{{\bf y}^{*\prime}}
 #+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
@@ -68,6 +76,70 @@ read.
   }
 #+end_src
 
-As is described in the notes, pre- or post-multiplying a matrix
-$\B$ by $\A$ will result in a matrix of deviations from column means
-of $\B$.  We may as well check that this is true.
+As is described in the notes, pre-multiplying a matrix $\B$ by $\A$
+will result in a matrix $\C = \A\B$ of deviations from the column
+means of $\B$. Check that this is true.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  A <- demean.mat(3)
+  B <- matrix(1:9, nrow=3)
+  col.means <- apply(B, 2, mean)
+  C <- apply(B, 1, function(x) {x - col.means})
+  all.equal(A %*% B, t(C))
+#+end_src
+
+#+RESULTS:
+: [1] TRUE
+
+Alright, we're ready to apply the functions to real data in order to
+calculate the centered $\Rsq$. First, read in the data to conform to
+equation (2.37) on page 14 of the lecture notes, and identify the
+number of observations $n$ for later use:
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  data <- read.csv("../data/auto.csv", header=TRUE)
+  names(data) <- c("price", "mpg", "weight")
+  y <- matrix(data$price)
+  X2 <- cbind(data$mpg, data$weight)
+  n <- nrow(X2)
+#+end_src
+
+#+RESULTS:
+
+The centered $\Rsq$ is defined according to equation (2.41) as
+follows:
+\begin{equation}
+\label{eq:rsq}
+\Rsq = \frac{\bp_{2}\Xsp_{2}\Xs_{2}\b_{2}}{\ysp\ys},
+\end{equation} where $\ys = \A\y$, $\Xs_2$ = \A\X_2$, and $\b_2 =
+(\Xsp_{2}\Xs_{2})^{-1}\Xsp_{2}\ys$.  Noting that $\A$ is both
+symmetric and idempotent, we can rewrite Eq. (\ref{eq:rsq}) in terms
+of matrices already defined, thereby simplifying the subsequent code
+dramatically.  From my limited experience with programming, the best
+code is that which reflects the core idea of the procedure; more time
+spent with a pen and paper and not in $\Rs$ will almost always yield
+more readable code, and more readable code yields fewer errors and
+suggests quick extensions.  That said, note that $\Xsp_{2}\Xs_{2} =
+\Xp_2\Ap\A\X_2 = \Xp_2\A\A\X_2 = \Xp_2\A\X_2$ and similarly that
+$\ysp\ys = \yp\A\y$ and $\Xsp_{2}\ys = \Xp_{2}\A\y$. If we write a
+more general function, though, we can apply it to an arbitrary
+dependent vector and associated cofactor matrix:
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  R.squared <- function(y, X) {
+    n <- nrow(X)
+    A <- demean.mat(n)
+    xtax <- t(X2) %*% A %*% X2
+    ytay <- t(y) %*% A %*% y
+    b2 <- solve(xtax) %*% t(X2) %*% A %*% y
+    t(b2) %*% xtax %*% b2 / ytay
+  }
+  
+  R.squared(y, X2)
+#+end_src
+
+#+RESULTS:
+:           [,1]
+: [1,] 0.2933891
+
+The $\Rsq$ value is an increasing function of the number of cofactors,
+the number of columns of matrix $\X$.  Without some adjustment for the
+number of variables, the $\Rsq$
