@@ -15,7 +15,7 @@
 #+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
 #+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
-#+LATEX: \renewcommand{\k}{\noindent}
+#+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
 \noindent This section is meant to give a brief introduction to data
@@ -40,7 +40,7 @@ matrix(1:6, ncol=2)
 : [2,]    2    5
 : [3,]    3    6
 
-\k The \code{ncol} option specifies the number of columns for the output
+The \code{ncol} option specifies the number of columns for the output
 matrix; and the default behavior of \code{matrix} is to cycle through
 by column.  To cycle through by rows, you'll have to set the optional
 argument \code{byrow=TRUE}.
@@ -54,7 +54,7 @@ matrix(1:6, ncol=3, byrow=TRUE)
 : [1,]    1    2    3
 : [2,]    4    5    6
 
-\k Suppose we wanted to check to see if the first matrix was equal to the
+Suppose we wanted to check to see if the first matrix was equal to the
 transpose of the second.  This is clearly the case -- we can see that
 it is.  But in code, it would be cumbersome to check this condition
 using the previous two commands.  Instead, we can assign the matrices
@@ -68,11 +68,11 @@ B <- matrix(1:6, ncol=3, byrow=TRUE)
 
 #+RESULTS:
 
-\k The \code{=} operator also assigns values, with a slightly
-different behavior; and it is common practice to use the \code{=}
-assignment for function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for
-a description of other standard practices in \R.]  The \code{==}
-comparison operator will yield \code{TRUE} or \code{FALSE}:
+The \code{=} operator also assigns values, with a slightly different
+behavior; and it is common practice to use the \code{=} assignment for
+function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for a description
+of other standard practices in \R.]  The \code{==} comparison operator
+will yield \code{TRUE} or \code{FALSE}:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 A == t(B)
@@ -84,10 +84,10 @@ A == t(B)
 : [2,] TRUE TRUE
 : [3,] TRUE TRUE
 
-\k Note that \code{t()} will return the tranpose of the supplied
-matrix.  Each element is checked individually, and each is identical
-in matrix $\A$ and $\Bp$.  To check the truthiness of the statement
-that all elements are identical, we need only to employ the \code{all}
+Note that \code{t()} will return the tranpose of the supplied matrix.
+Each element is checked individually, and each is identical in matrix
+$\A$ and $\Bp$.  To check the truthiness of the statement that all
+elements are identical, we need only to employ the \code{all}
 function:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
@@ -97,16 +97,16 @@ all(A == t(B))
 #+RESULTS:
 : [1] TRUE
 
-\k We can get a list of all the object currently available in memory
-with the \code{ls()} function, which is useful as the assignments
-begin to accumulate:
+We can get a list of all the object currently available in memory with
+the \code{ls()} function, which is useful as the assignments begin to
+accumulate:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 ls()
 #+END_SRC
 
-\k Note that without assignment, the transpose of $\B$ or \code{t(B)}
-is created on the fly, remaining anonymous.
+Note that without assignment, the transpose of $\B$ or \code{t(B)} is
+created on the fly, remaining anonymous.
 
 * Matrix operations
 
@@ -122,8 +122,8 @@ B %*% A
 : [1,]   14   32
 : [2,]   32   77
 
-\k The dimensions have to line up properly for matrix multiplication
-to be appropriately applied, otherwise \Rs returns an error, as is the
+The dimensions have to line up properly for matrix multiplication to
+be appropriately applied, otherwise \Rs returns an error, as is the
 case with the product $\B\Ap$:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
@@ -133,7 +133,7 @@ B %*% t(A)
 #+RESULTS:
 : Error in B %*% t(A) : non-conformable arguments
 
-\k If scalar multiplication is applied to matrices of exactly the same
+If scalar multiplication is applied to matrices of exactly the same
 dimensions, then the result is element-wise multiplication.  This type
 of operation is sometimes called the Hadamard product, denoted $\B
 \circ \Ap$:
@@ -147,10 +147,10 @@ B * t(A)
 : [1,]    1    4    9
 : [2,]   16   25   36
 
-\k More common, if we want to scale all elements by a factor of two,
-say, we just multiply a matrix by a scalar; but note that
-\code{class(2)} must be not be \code{matrix} but rather \code{numeric}
-so as to avoid a non-conformable error:
+More common, if we want to scale all elements by a factor of two, say,
+we just multiply a matrix by a scalar; but note that \code{class(2)}
+must be not be \code{matrix} but rather \code{numeric} so as to avoid
+a non-conformable error:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 A * 2
@@ -169,18 +169,18 @@ A * matrix(2)
 #+RESULTS:
 : Error in A * matrix(2) : non-conformable arrays
 
-\k Consider a more complicated operation, whereby each column of a
-matrix is multiplied element-wise by another, fixed column.  We
-encounter this situation frequently in time series analysis to test
-for parameter instability.  Here, each column of a particular matrix
-is multiplied in-place by a fixed column of residuals.  Let $\e$ be a
+Consider a more complicated operation, whereby each column of a matrix
+is multiplied element-wise by another, fixed column.  We encounter
+this situation frequently in time series analysis to test for
+parameter instability.  Here, each column of a particular matrix is
+multiplied in-place by a fixed column of residuals.  Let $\e$ be a
 vector defined as an increasing sequence of length three:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 e <- 1:3
 #+END_SRC
 
-\k Note first that the default sequence in \Rs is a column vector, and
+Note first that the default sequence in \Rs is a column vector, and
 not a row vector.  We would like to \code{apply} a function to each
 column of $\A$, specifically a function that multiplies each column
 in-place by $\e$.  We must supply a 2 to ensure that the function is
@@ -210,16 +210,16 @@ apply(A, 2, whoop)
 : [2,]    4   10
 : [3,]    9   18
 
-\k We will often need to define an identity matrix of dimension $n$, or
+We will often need to define an identity matrix of dimension $n$, or
 $\In$.  This is quick using \code{diag}:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 I <- diag(5)
 #+END_SRC
 
-\k There are many ways to calculate the trace of $\I_5$.  One method
-has been bundled into a function, called \code{tr()}, that is included
-in a packaged called \code{"psych"} which is not included in the base
+There are many ways to calculate the trace of $\I_5$.  One method has
+been bundled into a function, called \code{tr()}, that is included in
+a packaged called \code{"psych"} which is not included in the base
 distribution of \R.  We will need to grab and call the library to have
 access to the function, installing it with the command
 \code{install.packages("psych")}.  For this, you'll need an internet

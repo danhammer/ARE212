@@ -20,7 +20,7 @@
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
-#+LATEX: \renewcommand{\k}{\noindent}
+#+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
 This section is intended to introduce linear regression in \R.  The
@@ -35,7 +35,7 @@ file as variable names, rather than an observation.
 
 #+RESULTS:
 
-\k We can read the names from the data set; but they aren't much help.
+We can read the names from the data set; but they aren't much help.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   names(data)
@@ -44,7 +44,7 @@ file as variable names, rather than an observation.
 #+RESULTS:
 : [1] "V1" "V2" "V3"
 
-\k We can replace the column headers with more descriptive variable
+We can replace the column headers with more descriptive variable
 names.  The next command is an example of destructuring.  There are
 three elements in both the original and new list; and each element in
 the original list is reassigned based on its position in the list,
@@ -56,7 +56,7 @@ e.g., the \code{V1} header is replaced by \code{price}.
 
 #+RESULTS:
 
-\k To get a sense of the data, list the first six observations:
+To get a sense of the data, list the first six observations:
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   head(data)
@@ -71,7 +71,7 @@ e.g., the \code{V1} header is replaced by \code{price}.
 : 5  7827  15   4080
 : 6  5788  18   3670
 
-\k With the columns appropriately names, we can refer to particular
+With the columns appropriately names, we can refer to particular
 variables within the data set using the unique indexing in \R, where
 data objects tend to be variants of lists and nested lists.
 
@@ -82,7 +82,7 @@ data objects tend to be variants of lists and nested lists.
 #+RESULTS:
 : [1] 22 17 22 20 15 18
 
-\k Now for the analysis, a linear model using \code{lm()}.  We specify
+Now for the analysis, a linear model using \code{lm()}.  We specify
 the model by referring to the column headers within the specified data
 set --- along with a 1 to indicate a column of ones. \Rs is unique for
 intelligently snapping the dimensions of comparable matrices.
@@ -100,7 +100,7 @@ intelligently snapping the dimensions of comparable matrices.
 : (Intercept)          mpg       weight  
 :    1946.069      -49.512        1.747
 
-\k Note that we do not need to refer to the data set in calling a
+Note that we do not need to refer to the data set in calling a
 vector, e.g., \code{data\$price}.  Instead, we "attach" the data
 within the linear model.  We can do the same thing for the \Rs
 session, which tends to simplify notation.  The columns can be
@@ -114,7 +114,7 @@ referenced directly after the data set has been attached.
 #+RESULTS:
 : [1] 22 17 22 20 15 18
 
-\k The use of *canned* routines is not permitted for most of this
+The use of *canned* routines is not permitted for most of this
 class; you'll have to write the econometric routines from first
 principles.  First, create matrices of the data, since we will be
 working mainly with matrix operations.  Let $\y$ be the dependent
@@ -130,7 +130,7 @@ characteristics, along with a column of ones prepended.  The
 
 #+RESULTS:
 
-\k Check that the number of observations are the same in both the
+Check that the number of observations are the same in both the
 dependent vector $\y$ and the cofactor matrix $\X$.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
@@ -154,7 +154,7 @@ print(beta)
 : mpg     -49.512221
 : weight    1.746559
 
-\k This vector matches the coefficient vector from the canned routine,
+This vector matches the coefficient vector from the canned routine,
 thankfully.  Digging deeper into the numbers, consider the projection
 matrix $\P = \X(\Xp\X)^{-1}\Xp$ and the residual maker matrix $\M =
 \In - \P$
@@ -181,7 +181,7 @@ all.equal(M, t(M))
 #+RESULTS:
 : [1] TRUE
 
-\k If we want to test for exact equality, we set the tolerance to
+If we want to test for exact equality, we set the tolerance to
 zero, and the function will return a message with the mean relative
 difference between elements --- which is clearly very close to zero.
 
@@ -192,7 +192,7 @@ all.equal(M, t(M), tol=0)
 #+RESULTS:
 : [1] "Mean relative difference: 7.266263e-15"
 
-\k The residual maker matrix should also be idempotent, or $\M =
+The residual maker matrix should also be idempotent, or $\M =
 \M\Mp$.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
@@ -202,7 +202,7 @@ all.equal(M, M %*% t(M))
 #+RESULTS:
 : [1] TRUE
 
-\k Finally, we can examine the different components of the variation
+Finally, we can examine the different components of the variation
 in the dependent variable, as they relate to the OLS estimate.
 Specifically, we can show that the total sum of square is equal to the
 sum of the residual and estimated sum of squares: 
@@ -222,7 +222,7 @@ tss <- t(y) %*% y
 
 #+RESULTS:
 
-\k Then check the condition in Eq. (\ref{eq:ss}):
+Then check the condition in Eq. (\ref{eq:ss}):
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(tss, ess + rss)

@@ -1,0 +1,73 @@
+#+AUTHOR:      Dan Hammer
+#+TITLE:       ARE212: Section 03
+#+OPTIONS:     toc:nil num:nil 
+#+LATEX_HEADER: \usepackage{mathrsfs}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX: \newcommand{\Rs}{\texttt{R} }
+#+LATEX: \newcommand{\R}{\texttt{R}}
+#+LATEX: \newcommand{\Rsq}{R^{2}}
+#+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
+#+LATEX: \setlength{\parindent}{0in}
+#+STARTUP: fninline
+
+The idea behind this section is to study the behavior of the centered
+and uncentered $\Rsq$ as cofactors are incrementally included in the
+regression.  First, we must create a random matrix, where each
+variable is drawn from a standard uniform distribution.  All elements
+are independent and identically distributed, so we can create a very
+long, random vector and reshape it into a rectangular matrix.  For
+convenience and practice writing functions in $\R$, we show a general
+function that accepts the dimensions ($n$ rows and $k$ columns) of the
+matrix.  The function generates a long vector of length $n \cdot k$
+and then reshapes it into an $n \times k$ matrix.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  random.mat <- function(n, k) {
+    v <- runif(n*k)
+    matrix(v, nrow=n, ncol=k)
+  }
+#+end_src
+
+The function bound to \code{random.mat()} behaves as we would expect:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  random.mat(3,2)
+#+end_src
+
+#+RESULTS:
+:            [,1]      [,2]
+: [1,] 0.54596729 0.1595011
+: [2,] 0.09682105 0.8549968
+: [3,] 0.92691069 0.5953242
+
+Another useful function for this section will be to create a square
+demeaning matrix $\A$ of dimension $n$.  The following function just
+wraps a few algebraic maneuvers, so that subsequent code is easier to
+read.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  demean.mat <- function(n) {
+    ones <- rep(1, n)
+    diag(n) - (1/n) * ones %*% t(ones)
+  }
+#+end_src
+
+As is described in the notes, pre- or post-multiplying a matrix
+$\B$ by $\A$ will result in a matrix of deviations from column means
+of $\B$.  We may as well check that this is true.
