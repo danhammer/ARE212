@@ -15,7 +15,7 @@ recommended_) then please see the next section of this README.
 
 2. A PDF of the section description, which documents the code. 
 
-3. An `R` script that compiles all of the code within the PDF.  Note
+3. An R script that compiles all of the code within the PDF.  Note
 that there is no documentation within the code.  Instead, the code is
 documented from the PDF description.
 
@@ -24,10 +24,10 @@ there will be a subdirectory called `inserts/` within the section
 header.
 
 The sections are organized as follows:
-- `section-01` Matrix operations in R.
-- `section-02` OLS in R.
-- `section-03` 
-- `section-04` 
+- `section-01` Matrix operations in R
+- `section-02` OLS regressions from first principles
+- `section-03` Centered R^2
+- `section-04` Hypothesis testing
 
 # Org mode notes
 

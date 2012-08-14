@@ -18,7 +18,7 @@
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
-\noindent This section is meant to give a brief introduction to data
+This section is meant to give a brief introduction to data
 manipulation in \R, and specifically to the type of data work that
 will be required to support future lectures.
 
