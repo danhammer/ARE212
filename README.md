@@ -46,3 +46,23 @@ A few things to consider.  When you try to compile the `.org` files to
 a PDF document, you may have to compile it twice or reload the buffer
 using `C-u M-x org-reload`.  To tangle the code within the org-mode
 document to an `.R` script, you can use the key binding `C-c C-v t`.
+
+# Spatial analysis in R
+
+Spatial data is becoming increasingly more common in empirical
+econometrics.  R has some very convenient facilities for interacting
+with relational databases, which support spatial data.  A notable
+example is the open source project
+[cartodb-r](https://github.com/Vizzuality/cartodb-r), which allows
+quick and easy access to various spatial data types and server-side
+spatial analysis.  An example of the type of spatial data analysis
+that can be done from within R is shown below.  
+
+The orange and blue points are households in New Delhi; the orange
+indicates a relatively healthy household, the blue indicates a
+household where at least one member has recently experienced diarrhea.
+The green points are sewage and garbage facilities.  This is a sort of
+modern-day [cholera
+map](http://en.wikipedia.org/wiki/File:Snow-cholera-map-1.jpg).
+
+[![](http://i.imgur.com/TMPBC.jpg)](https://danhammer.cartodb.com/tables/facilities_household/embed_map)
