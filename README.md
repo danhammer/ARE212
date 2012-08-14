@@ -13,7 +13,11 @@ directly if you are not using Emacs, but rather just with the R code
 or PDF write-up.  If you'd like to get set up with Emacs (_highly
 recommended_) then please see the next section of this README.
 
-2. A PDF of the section description, which documents the code. 
+2. A PDF of the section notes, which effectively documents the code.
+If you are only interested in following along, rather than running the
+code yourself, just browse to the `.pdf` file for the section
+(e.g. [`sec-01.pdf`](https://github.com/danhammer/ARE212/blob/master/section-01/sec-01.pdf))
+and click "view raw".  The PDF will begin downloading immediately.
 
 3. An R script that compiles all of the code within the PDF.  Note
 that there is no documentation within the code.  Instead, the code is
