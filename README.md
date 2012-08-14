@@ -24,9 +24,13 @@ there will be a subdirectory called `inserts/` within the section
 header.
 
 The sections are organized as follows:
+
 [`section-01`](https://github.com/danhammer/ARE212/tree/master/section-01) Matrix operations in R
+
 [`section-02`](https://github.com/danhammer/ARE212/tree/master/section-02) OLS regressions from first principles
+
 [`section-03`](https://github.com/danhammer/ARE212/tree/master/section-03) Centered R^2
+
 [`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Hypothesis testing
 
 # Org mode notes
