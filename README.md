@@ -33,6 +33,15 @@ The sections are organized as follows:
 
 [`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Hypothesis testing
 
+# Help me write this!  
+
+This project can and _should_ be treated like any other open source
+project.  If you are interested in helping me make this project
+better, [fork the repo](https://help.github.com/articles/fork-a-repo),
+edit the screwy files, and [send a pull
+request](https://help.github.com/articles/using-pull-requests).  I
+will review and merge the changes -- until someone else takes over!
+
 # Org mode notes
 
 If you are running [Emacs](http://www.gnu.org/software/emacs), then
@@ -42,7 +51,7 @@ documentation, and results are all bundled into the same file.  The
 `#+RESULTS` output is automatically generated from the immediately
 preceding code block.
 
-![](http://dl.dropbox.com/u/5365589/org-mode.png)
+-> ![](http://dl.dropbox.com/u/5365589/org-mode.png) <-
 
 A few things to note.  When you try to compile the `.org` files to
 a PDF document, you may have to compile it twice or reload the buffer
