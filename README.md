@@ -29,7 +29,7 @@ The sections are organized as follows:
 
 [`section-02`](https://github.com/danhammer/ARE212/tree/master/section-02) OLS regressions from first principles
 
-[`section-03`](https://github.com/danhammer/ARE212/tree/master/section-03) Centered R^2
+[`section-03`](https://github.com/danhammer/ARE212/tree/master/section-03) Goodness of fit
 
 [`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Hypothesis testing
 
