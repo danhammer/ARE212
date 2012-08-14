@@ -67,12 +67,11 @@ document to an `.R` script, you can use the key binding `C-c C-v t`.
 
 This is of personal interest.  R is ideal for econometric analysis;
 but it also has some very convenient facilities for interacting with
-relational databases that support spatial data analysis.  A notable example
-is the open source project
-[cartodb-r](https://github.com/Vizzuality/cartodb-r), which allows
-quick and easy access to various spatial data types and server-side
-spatial analysis.  An example of the type of spatial data analysis
-that can be done from within R is shown below.
+relational databases that support spatial data analysis.  A notable
+example is the open source project
+[cartodb-r](https://github.com/Vizzuality/cartodb-r).  An example of
+the type of spatial data analysis that can be done from within R,
+riding on [CartoDB](http://cartodb.com) is shown below.
 
 The orange and blue points are households in New Delhi; the orange
 indicates a relatively healthy household, the blue indicates a
