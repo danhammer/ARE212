@@ -35,8 +35,14 @@ The sections are organized as follows:
 
 # Org mode notes
 
-If you are running the `.org` files, you may run into a situation when
-you'll need to reload org-mode to properly view the code output, which
-can be done with `C-u M-x org-reload`.  If you are adding a code
-block, then a neat shortcut is `<s TAB`, which will delineate a code
-block within the org file.  Then, to tangle the code, hit `C-c C-v t`.
+If you are running [Emacs](http://www.gnu.org/software/emacs), then
+you have access to [org-mode](http://orgmode.org), an open source
+solution for interactive coding and reproducible research.  The code,
+documentation, and results are all bundled into the same file:
+
+![](http://dl.dropbox.com/u/5365589/org-mode.png)
+
+A few things to consider.  When you try to compile the `.org` files to
+a PDF document, you may have to compile it twice or reload the buffer
+using `C-u M-x org-reload`.  To tangle the code within the org-mode
+document to an `.R` script, you can use the key binding `C-c C-v t`.
