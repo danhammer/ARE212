@@ -35,10 +35,11 @@ The sections are organized as follows:
 
 # Help me write this!  
 
-This project can and _should_ be treated like any other open source
-project.  If you are interested in helping me make this project
-better, [fork the repo](https://help.github.com/articles/fork-a-repo),
-edit the screwy files, and [send a pull
+This project can and _should_ be treated like any other open source,
+collaborative coding project.  If you are interested in helping me
+make this project better, [fork the
+repo](https://help.github.com/articles/fork-a-repo), edit the screwy
+files, and [send a pull
 request](https://help.github.com/articles/using-pull-requests).  I
 will review and merge the changes -- until someone else takes over!
 
