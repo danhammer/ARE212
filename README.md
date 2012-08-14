@@ -39,7 +39,8 @@ If you are running [Emacs](http://www.gnu.org/software/emacs), then
 you have access to [org-mode](http://orgmode.org), an open source
 solution for interactive coding and reproducible research.  The code,
 documentation, and results are all bundled into the same file.  The
-`#+RESULTS` output are automatically generated.
+`#+RESULTS` output is automatically generated from the immediately
+preceding code block.
 
 ![](http://dl.dropbox.com/u/5365589/org-mode.png)
 
