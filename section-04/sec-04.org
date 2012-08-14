@@ -6,10 +6,13 @@
 #+LATEX_HEADER: \usepackage{subfigure}
 #+LATEX: \newcommand{\Rs}{\texttt{R} }
 #+LATEX: \newcommand{\R}{\texttt{R}}
+#+LATEX: \newcommand{\Rb}{{\bf R}}
+#+LATEX: \newcommand{\Rbp}{{\bf R}^{\prime}}
 #+LATEX: \newcommand{\Rsq}{R^{2}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\b}{{\bf b}}
+#+LATEX: \renewcommand{\r}{{\bf r}}
 #+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
 #+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
@@ -54,6 +57,42 @@ indexing in \R.
 
 #+RESULTS:
 
+For reference, consider the regression output, using data we've seen
+before:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+res <- lm(price ~ 1 + mpg + weight, data=data)
+summary(res)
+#+end_src
+
+#+results:
+#+begin_example
+
+Call:
+lm(formula = price ~ 1 + mpg + weight, data = data)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -3332  -1858   -504   1256   7507 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)   
+(Intercept) 1946.0687  3597.0496   0.541  0.59019   
+mpg          -49.5122    86.1560  -0.575  0.56732   
+weight         1.7466     0.6414   2.723  0.00813 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2514 on 71 degrees of freedom
+Multiple R-squared: 0.2934,	Adjusted R-squared: 0.2735 
+F-statistic: 14.74 on 2 and 71 DF,  p-value: 4.425e-06
+#+end_example
+
+In order to perform individual t-tests, we will first have to identify
+the standard errors for each coefficient, noting the distribution in
+(2.63).  The variance of the error, $\sigs$, can be numerically
+estimated, as shown below:
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
   n <- nrow(X); k <- ncol(X)
   P <- X %*% solve(t(X) %*% X) %*% t(X)
@@ -66,12 +105,76 @@ indexing in \R.
 :         [,1]
 : [1,] 6320340
 
+The vector of standard errors matches those reported from $\Rs$'s
+canned routine \code{lm()}, which is encouraging.
+
 #+begin_src R :results output graphics :exports both :tangle yes :session
   vcov.mat <- as.numeric(s2) * solve(t(X) %*% X)
-  se.vec <- diag(vcov.mat)
-  se.vec
+  se <- sqrt(diag(vcov.mat))
+  print(se)
 #+end_src
 
 #+RESULTS:
-: [1] 1.293877e+07 7.422863e+03 4.113347e-01
+: [1] 3597.0495988   86.1560389    0.6413538
 
+We can now use the vector of standard errors to perform the individual
+t-tests.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  b <- solve(t(X) %*% X) %*% t(X) %*% y
+  apply(b / se, 1, function(t) {2*pt(-abs(t), df=n-k)})
+#+end_src
+
+#+RESULTS:
+: [1] 0.590188628 0.567323727 0.008129813
+
+Great!  We have replicated the \code{Pr(>|t|)} column of the canned
+output.  Now let's try to replicate the full regression F-statistic.
+This is a joint test of coefficient significance; are the coefficients
+jointly different from a zero vector?  Max has a great description as
+to why this is different from three separate tests of significance.
+For now, note that we are testing joint significance by setting
+\begin{equation}
+\label{eq:fmats}
+\Rb = \left[ \begin{array}{ccc} 1 & 0 & 0 \\
+                                0 & 1 & 0 \\
+                                0 & 0 & 1 \\ \end{array} \right]
+\hspace{10pt} \mbox{and} \hspace{10pt}
+\r = \left[ \begin{array}{c} 0 \\ 0 \\ 0 \\ \end{array} \right]
+\end{equation} 
+
+This is great.  This simplifies the hell out of equation (2.81), which
+is fairly daunting at first:
+
+\begin{equation}
+\label{eq:F}
+F = \frac{(\Rb\b - \r)^{\prime}[\Rb(\Xp\X)^{-1}\Rbp]^{-1}(\Rb\b - \r)/J}{s^2} = 
+    \frac{\bp(\Xp\X)\b/J}{s^2}
+\end{equation}
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  F <- t(b) %*% (t(X) %*% X) %*% b / (s2*3)
+  print(F)
+#+end_src
+
+#+RESULTS:
+:          [,1]
+: [1,] 158.1714
+
+Well shit.  This is much larger than the reported F-statistic of
+14.74.  What happened?  The problem is that we also included the
+intercept, whereas $\Rs$ assumes that this shouldn't be included in
+the joint test.  Simplification failed.  Let's try again.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  R <- rbind(c(0, 1, 0), c(0, 0, 1)); J <- 2
+  select.var <- solve(R %*% solve(t(X) %*% X) %*% t(R))
+  F <- t(R %*% b) %*% select.var %*% (R %*% b) / (s2 * J)
+  print(c(F, pf(F, 2, 71, lower.tail=FALSE)))
+#+end_src
+
+#+RESULTS:
+: [1] 1.473982e+01 4.424878e-06
+
+It worked!  And the probability of observing the F-statistic with
+degrees of freedom $J=2$ and $n-k = 71$ is printed as well.  
