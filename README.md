@@ -37,6 +37,8 @@ The sections are organized as follows:
 
 [`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Hypothesis testing
 
+[`section-11`](https://github.com/danhammer/ARE212/tree/master/section-11) Spatial analysis in R
+
 # Help me write this!  
 
 This project can and _should_ be treated like any other open source,
