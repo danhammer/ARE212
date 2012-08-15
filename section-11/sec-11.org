@@ -1,0 +1,171 @@
+#+AUTHOR:      Dan Hammer
+#+TITLE:       ARE212: Section 11
+#+OPTIONS:     toc:nil num:nil 
+#+LATEX_HEADER: \usepackage{mathrsfs}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX: \newcommand{\Rs}{\texttt{R} }
+#+LATEX: \newcommand{\R}{\texttt{R}}
+#+LATEX: \newcommand{\Rb}{{\bf R}}
+#+LATEX: \newcommand{\Rbp}{{\bf R}^{\prime}}
+#+LATEX: \newcommand{\Rsq}{R^{2}}
+#+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\b}{{\bf b}}
+#+LATEX: \renewcommand{\r}{{\bf r}}
+#+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
+#+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
+#+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\C}{{\bf C}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Xsp}{{\bf X}^{*\prime}}
+#+LATEX: \renewcommand{\Xs}{{\bf X}^{*}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\ys}{{\bf y}^{*}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\ysp}{{\bf y}^{*\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \renewcommand{\sigs}{\sigma^{2}}
+#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
+#+LATEX: \setlength{\parindent}{0in}
+#+STARTUP: fninline
+
+This is the fun (read: optional!) section to show how to manipulate
+and visualize spatial data in $\R$.  It seems more fun to start with a
+data story; and work through some basic analysis.  
+
+Data.gov is a data repository administered by the US government with
+over 445,000 geographic data sets.  One dat set is the geographic
+coordinates and characteristics of 7,863 farmers marketsin the United
+States.[fn:: https://explore.data.gov/d/wfna-38ey] Suppose we are
+interested in examining the effect of state boundaries on the
+characteristics of farmers markets.  Do state boundaries have a
+substantive impact on the character of farmers markets, or are the no
+better than arbitrary lines.  There are rigorous ways to address this
+question, but we will just classify and plot farmers markets, looking
+for spatial patterns that follow state boundaries.
+
+First, we export the farmers market data set as a CSV file, saving it
+to the data directory as \code{farmers-mkts.csv}. Let's just plot the
+distribution of farmers markets on a a base map of the United States.
+To do this, you will need to install and then load the following
+libraries:
+
+#+begin_src R :results output graphics :exports both :file inserts/us-mkts.png :tangle yes :session
+  library(maps)
+  library(maptools)
+  library(RColorBrewer)
+  library(classInt)
+  library(gpclib)
+  library(mapdata)
+  
+  data <- read.csv("../data/farmers-mkts.csv", header=TRUE)
+  map("state", interior = FALSE)
+  map("state", boundary = FALSE, col = "gray", add = TRUE)
+  points(data$x, data$y, cex = 0.2, col="blue")
+#+end_src
+
+#+RESULTS:
+[[file:inserts/graph1.png]]
+
+The distribution of farmers markets across the US is neat to see, but
+there are so many points that it is difficult to visually glean any
+useful information, as seen in the following figure.  So, instead,
+lets only consider the farmers markets in Colorado, Utah, New Mexico,
+and Arizona.  There are 354 farmers markets in these four states.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  statelist <- c("New Mexico", "Colorado", "Arizona", "Utah")
+  idx <- is.element(data$State, statelist) 
+  state.data <- data[idx, ]
+  dim(state.data)
+#+end_src
+
+#+RESULTS:
+: [1] 354
+
+Each column of the \code{state.data} data frame contains information
+on a different attribute of the farmers markets.  The last 24 columns
+are binary variables with entries \code{"Y"} or \code{"N"}, indicating
+whether the market sells cheese, for example, or accepts credit cards.
+These are the attributes of interest.  The idea is whether we can
+predict the state of the farmers market, purely based on the
+characteristics.  If so, then the state boundaries are correlated with
+the attributes for some reason --- which is not included in the scope
+of this example.  We can extract these characteristics into a matrix
+$\X$ and recode the string variables to 0-1 binary variables.  Note
+that the default numeric levels of the string variables are 2 and 3,
+so subtracting 2 will yield the desired result.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  X <- state.data[, 8:ncol(state.data)]
+  for(i in names(X)) {
+    X[[i]] <- as.numeric(X[[i]]) - 2
+  }
+#+end_src
+
+#+RESULTS:
+
+We want to categorize the markets based on their characteristics into
+four distinct buckets, indicating one of the four states.  For this,
+we can use K-Means clustering, which is a simple call in $\R$.  The
+resulting object \code{cl} is a list with various output attributes of
+the clustering, including to which of the four clusters each market
+was assigned, indicated by \code{cl\$cluster}.  This is the vector we
+will use to color the points on the map.  There are many other
+attributes that are collected in \code{cl}; three of them are listed
+below.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  cl <- kmeans(X, 4)
+  names(cl)[1:3]
+#+end_src
+
+#+RESULTS:
+: [1] "cluster" "centers" "totss"
+
+The following code plots the points by zooming in on the four states,
+and coloring each market by the predicted state.  There is slight
+variation in the output map, as $\Rs$ selects the exact colors on the
+fly.  Below, we save the resulting image to
+\code{inserts/limited-mkts.png} and display one such image, produced
+previously.  I won't describe this code in detail, but see [[g][this post]]
+for a fuller description of what's going on.
+
+#+begin_src R :exports code :tangle yes :session
+nclr <- 4
+plotclr <- brewer.pal(nclr, "Set1")
+class <- classIntervals(plotvar, nclr, style = "pretty")
+colcode <- findColours(class, cl$cluster)
+png("inserts/limited-mkts.png")
+map("state", interior = FALSE, 
+    xlim = c(-117, -101), ylim = c(28, 43))
+map("state", boundary = FALSE, col="gray", add = TRUE, 
+    xlim = c(-117, -101), ylim = c(28, 43))
+points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
+dev.off()
+#+end_src
+
+#+RESULTS:
+
+[[file:inserts/farmers-markets-final.png]]
+
+This is cool.  It is clear that there is some separable variation in
+the characteristics of the markets.  The red points seem to be
+clustered in New Mexico, the lower-right state.  Even markets right
+across the border have characteristics that are different enough to
+"correctly" cluster them by state.  There must be something about
+state regulations that are particularly imposing in New Mexico. \\
+
+This is just one of many neat examples about how to use $\Rs$ to
+examine spatial variation; and to effectively uncover some spatial,
+data generating processes that are not obvious from looking at the
+data in a matrix or spreadsheet.  More to come!
