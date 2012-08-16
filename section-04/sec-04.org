@@ -4,8 +4,6 @@
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
-#+LATEX: \newcommand{\Rs}{\texttt{R} }
-#+LATEX: \newcommand{\R}{\texttt{R}}
 #+LATEX: \newcommand{\Rb}{{\bf R}}
 #+LATEX: \newcommand{\Rbp}{{\bf R}^{\prime}}
 #+LATEX: \newcommand{\Rsq}{R^{2}}
@@ -34,11 +32,10 @@
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
 #+LATEX: \renewcommand{\sigs}{\sigma^{2}}
-#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
-This is an introducton to basic hypothesis testing in \R. We have
+This is an introducton to basic hypothesis testing in =R=. We have
 shown that, with a certain set of assumptions, the difference between
 the OLS estimator and the true parameter vector is distributed
 normally as shown in expression (2.63): $$(\b - \beta)|\X \sim N({\bf
@@ -46,7 +43,7 @@ normally as shown in expression (2.63): $$(\b - \beta)|\X \sim N({\bf
 $s^2 = \ep\e/(n-k)$ is an unbiased estimator of $\sigs$ in Section
 2.3.4 of the lecture notes. The purpose of the section is not to
 rehash the lectures, but instead to use the results to practice
-indexing in \R.
+indexing in =R=.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   data <- read.csv("../data/auto.csv", header=TRUE)
@@ -105,8 +102,8 @@ estimated, as shown below:
 :         [,1]
 : [1,] 6320340
 
-The vector of standard errors matches those reported from $\Rs$'s
-canned routine \code{lm()}, which is encouraging.
+The vector of standard errors matches those reported from =R='s
+canned routine =lm()=, which is encouraging.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   vcov.mat <- as.numeric(s2) * solve(t(X) %*% X)
@@ -128,12 +125,12 @@ t-tests.
 #+RESULTS:
 : [1] 0.590188628 0.567323727 0.008129813
 
-Great!  We have replicated the \code{Pr(>|t|)} column of the canned
-output.  Now let's try to replicate the full regression F-statistic.
-This is a joint test of coefficient significance; are the coefficients
-jointly different from a zero vector?  Max has a great description as
-to why this is different from three separate tests of significance.
-For now, note that we are testing joint significance by setting
+Great!  We have replicated the =Pr(>|t|)= column of the canned output.
+Now let's try to replicate the full regression F-statistic.  This is a
+joint test of coefficient significance; are the coefficients jointly
+different from a zero vector?  Max has a great description as to why
+this is different from three separate tests of significance.  For now,
+note that we are testing joint significance by setting
 \begin{equation}
 \label{eq:fmats}
 \Rb = \left[ \begin{array}{ccc} 1 & 0 & 0 \\
@@ -163,7 +160,7 @@ F = \frac{(\Rb\b - \r)^{\prime}[\Rb(\Xp\X)^{-1}\Rbp]^{-1}(\Rb\b - \r)/J}{s^2} =
 
 Well shit.  This is much larger than the reported F-statistic of
 14.74.  What happened?  The problem is that we also included the
-intercept, whereas $\Rs$ assumes that this shouldn't be included in
+intercept, whereas =R= assumes that this shouldn't be included in
 the joint test.  Simplification failed.  Let's try again.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
