@@ -24,10 +24,10 @@
 #+STARTUP: fninline
 
 This section is intended to introduce linear regression in \R.  The
-first step is to read the data set \code{auto.csv} from the relative
-path.  You can also download it from [[https://github.com/danhammer/ARE212/blob/master/data/auto.csv][here]].  We set the option
-\code{header} to \code{TRUE}, which treats the first line of the CSV
-file as variable names, rather than an observation.
+first step is to read the data set =auto.csv= from the relative path.
+You can also download it from [[https://github.com/danhammer/ARE212/blob/master/data/auto.csv][here]].  We set the option =header= to
+=TRUE=, which treats the first line of the CSV file as variable names,
+rather than an observation.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   data <- read.csv("../data/auto.csv", header=TRUE)
@@ -48,7 +48,7 @@ We can replace the column headers with more descriptive variable
 names.  The next command is an example of destructuring.  There are
 three elements in both the original and new list; and each element in
 the original list is reassigned based on its position in the list,
-e.g., the \code{V1} header is replaced by \code{price}.
+e.g., the =V1= header is replaced by =price=.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   names(data) <- c("price", "mpg", "weight")
@@ -72,7 +72,7 @@ To get a sense of the data, list the first six observations:
 : 6  5788  18   3670
 
 With the columns appropriately names, we can refer to particular
-variables within the data set using the unique indexing in \R, where
+variables within the data set using the unique indexing in =R=, where
 data objects tend to be variants of lists and nested lists.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
@@ -82,9 +82,9 @@ data objects tend to be variants of lists and nested lists.
 #+RESULTS:
 : [1] 22 17 22 20 15 18
 
-Now for the analysis, a linear model using \code{lm()}.  We specify
+Now for the analysis, a linear model using =lm()=.  We specify
 the model by referring to the column headers within the specified data
-set --- along with a 1 to indicate a column of ones. \Rs is unique for
+set --- along with a 1 to indicate a column of ones. =R= is unique for
 intelligently snapping the dimensions of comparable matrices.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
@@ -101,8 +101,8 @@ intelligently snapping the dimensions of comparable matrices.
 :    1946.069      -49.512        1.747
 
 Note that we do not need to refer to the data set in calling a
-vector, e.g., \code{data\$price}.  Instead, we "attach" the data
-within the linear model.  We can do the same thing for the \Rs
+vector, e.g., =data$price=.  Instead, we "attach" the data
+within the linear model.  We can do the same thing for the =R=
 session, which tends to simplify notation.  The columns can be
 referenced directly after the data set has been attached.
 
@@ -114,14 +114,14 @@ referenced directly after the data set has been attached.
 #+RESULTS:
 : [1] 22 17 22 20 15 18
 
-The use of *canned* routines is not permitted for most of this
+The use of /canned/ routines is not permitted for most of this
 class; you'll have to write the econometric routines from first
 principles.  First, create matrices of the data, since we will be
 working mainly with matrix operations.  Let $\y$ be the dependent
 variable, price, and let $\X$ be a matrix of the other car
 characteristics, along with a column of ones prepended.  The
-\code{cbind()} function binds the columns horizontally and coerces the
-\code{matrix} class.
+=cbind()= function binds the columns horizontally and coerces the
+=matrix= class.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   y <- matrix(price)
@@ -140,8 +140,8 @@ dim(X)[1] == nrow(y)
 #+RESULTS:
 : [1] TRUE
 
-\k Using the matrix operations described in the previous section, we
-can quickly estimate the ordinary least squared parameter vector. 
+Using the matrix operations described in the previous section, we can
+quickly estimate the ordinary least squared parameter vector.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
 beta <- solve(t(X) %*% X) %*% t(X) %*% y
@@ -167,12 +167,12 @@ M <- diag(n) - P
 
 #+RESULTS:
 
-\k \Rs is useful for checking the properties of these matrices,
-including whether $\M$ is symmetric, that is, whether $\M = \Mp$.  The
-function \code{all.equal()} does not test *exact* equality, but
-instead whether the supplied objects are "close enough" to be
-considered the same.  The problem is the limits of machine precision,
-and rounding at the tail ends of floating point numbers.
+=R= is useful for checking the properties of these matrices, including
+whether $\M$ is symmetric, that is, whether $\M = \Mp$.  The function
+=all.equal()= does not test *exact* equality, but instead whether
+the supplied objects are "close enough" to be considered the same.
+The problem is the limits of machine precision, and rounding at the
+tail ends of floating point numbers.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(M, t(M))
