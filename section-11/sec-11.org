@@ -133,20 +133,37 @@ The following code plots the points by zooming in on the four states,
 and coloring each market by the predicted state.  There is slight
 variation in the output map, as =R= selects the exact colors on the
 fly.  Below, we save the resulting image to =inserts/limited-mkts.png=
-and display one such image, produced previously.  I won't describe
-this code in detail, but see [[g][this post]] for a fuller description of
-what's going on.
+and display one such image, produced previously.  We set the number of
+colors to 4, one for each state; and the =brewer.pal()= function sets
+separate color codes for the number of supplied classes according to
+the color scheme =Set1=.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  nclr <- 4
+  clr.set <- brewer.pal(nclr, "Set1")
+#+end_src
+
+There exactly four cluster values to match the four-color palette.
+However, the =classIntervals()= assigns each color in the palette to a
+range of values for the more general case.  The =findColours()=
+function then maps the color codes to each point in the cluster
+vector; and this is the schema that is used to color the points on the
+map.
+
+#+begin_src R :results output silent :exports both :tangle yes :session
+  class <- classIntervals(cl$cluster, nclr, style = "pretty")
+  colcode <- findColours(class, cl$cluster)
+#+end_src
+
+The map is generated in much the same way as the full US map, except
+that the extent is limited by a latitude-longitude bounding box.
 
 #+begin_src R :results graphics silent :exports both :file inserts/sel-mkts.png :tangle yes :session
-nclr <- 4
-plotclr <- brewer.pal(nclr, "Set1")
-class <- classIntervals(cl$cluster, nclr, style = "pretty")
-colcode <- findColours(class, cl$cluster)
-map("state", interior = FALSE, 
-    xlim = c(-117, -101), ylim = c(28, 43))
-map("state", boundary = FALSE, col="gray", add = TRUE, 
-    xlim = c(-117, -101), ylim = c(28, 43))
-points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
+  map("state", interior = FALSE, 
+      xlim = c(-117, -101), ylim = c(28, 43))
+  map("state", boundary = FALSE, col="gray", add = TRUE, 
+      xlim = c(-117, -101), ylim = c(28, 43))
+  points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
 #+end_src
 
 [[file:inserts/farmers-markets-final.png]]
