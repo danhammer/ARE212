@@ -4,8 +4,6 @@
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
-#+LATEX: \newcommand{\Rs}{\texttt{R} }
-#+LATEX: \newcommand{\R}{\texttt{R}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
@@ -14,20 +12,19 @@
 #+LATEX: \renewcommand{\A}{{\bf A}}
 #+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
 #+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
-#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
 This section is meant to give a brief introduction to data
-manipulation in \R, and specifically to the type of data work that
+manipulation in =R=, and specifically to the type of data work that
 will be required to support future lectures.
 
 * Creating matrices
 
-There are a variety of data objects in \R, including numbers, vectors,
+There are a variety of data objects in =R=, including numbers, vectors,
 matrices, strings, and dataframes.  We will mainly be working with
-vectors and matrices, which are quick to create and manipulate in \R.
-The \code{matrix} function will create a matrix, according to the
+vectors and matrices, which are quick to create and manipulate in =R=.
+The =matrix= function will create a matrix, according to the
 supplied arguments.
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
@@ -40,10 +37,10 @@ matrix(1:6, ncol=2)
 : [2,]    2    5
 : [3,]    3    6
 
-The \code{ncol} option specifies the number of columns for the output
-matrix; and the default behavior of \code{matrix} is to cycle through
-by column.  To cycle through by rows, you'll have to set the optional
-argument \code{byrow=TRUE}.
+The =ncol= option specifies the number of columns for the output
+matrix; and the default behavior of =matrix= is to cycle through by
+column.  To cycle through by rows, you'll have to set the optional
+argument =byrow=TRUE=.
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 matrix(1:6, ncol=3, byrow=TRUE)
@@ -55,11 +52,11 @@ matrix(1:6, ncol=3, byrow=TRUE)
 : [2,]    4    5    6
 
 Suppose we wanted to check to see if the first matrix was equal to the
-transpose of the second.  This is clearly the case -- we can see that
+transpose of the second.  This is clearly the case --- we can see that
 it is.  But in code, it would be cumbersome to check this condition
 using the previous two commands.  Instead, we can assign the matrices
-to variables for use in subsequent manipulations.  The \code{<-}
-operator assigns the arbitrary object to the supplied variable:
+to variables for use in subsequent manipulations.  The =<-= operator
+assigns the arbitrary object to the supplied variable:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 A <- matrix(1:6, ncol=2)
@@ -68,11 +65,11 @@ B <- matrix(1:6, ncol=3, byrow=TRUE)
 
 #+RESULTS:
 
-The \code{=} operator also assigns values, with a slightly different
-behavior; and it is common practice to use the \code{=} assignment for
-function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for a description
-of other standard practices in \R.]  The \code{==} comparison operator
-will yield \code{TRUE} or \code{FALSE}:
+The \texttt{=} operator also assigns values, with a slightly different
+behavior; and it is common practice to use the \texttt{=} assignment
+for function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for a
+description of other standard practices in \R.]  The \texttt{==}
+comparison operator will yield \texttt{TRUE} or \texttt{FALSE}:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 A == t(B)
@@ -84,11 +81,10 @@ A == t(B)
 : [2,] TRUE TRUE
 : [3,] TRUE TRUE
 
-Note that \code{t()} will return the tranpose of the supplied matrix.
-Each element is checked individually, and each is identical in matrix
-$\A$ and $\Bp$.  To check the truthiness of the statement that all
-elements are identical, we need only to employ the \code{all}
-function:
+Note that =t()= will return the tranpose of the supplied matrix.  Each
+element is checked individually, and each is identical in matrix $\A$
+and $\Bp$.  To check the truthiness of the statement that all elements
+are identical, we need only to employ the =all= function:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 all(A == t(B))
@@ -98,20 +94,20 @@ all(A == t(B))
 : [1] TRUE
 
 We can get a list of all the object currently available in memory with
-the \code{ls()} function, which is useful as the assignments begin to
+the =ls()= function, which is useful as the assignments begin to
 accumulate:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 ls()
 #+END_SRC
 
-Note that without assignment, the transpose of $\B$ or \code{t(B)} is
+Note that without assignment, the transpose of $\B$ or =t(B)= is
 created on the fly, remaining anonymous.
 
 * Matrix operations
 
-Matrix muliplication in \Rs is bound to \code{\%*\%}, whereas scalar
-multiplication is bound to \code{*}.  Consider the product $\B\A$:
+Matrix muliplication in =R= is bound to =%*%=, whereas scalar
+multiplication is bound to =*=.  Consider the product $\B\A$:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 B %*% A
@@ -148,9 +144,9 @@ B * t(A)
 : [2,]   16   25   36
 
 More common, if we want to scale all elements by a factor of two, say,
-we just multiply a matrix by a scalar; but note that \code{class(2)}
-must be not be \code{matrix} but rather \code{numeric} so as to avoid
-a non-conformable error:
+we just multiply a matrix by a scalar; but note that =class(2)= must
+be not be =matrix= but rather =numeric= so as to avoid a
+non-conformable error:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 A * 2
@@ -180,8 +176,8 @@ vector defined as an increasing sequence of length three:
 e <- 1:3
 #+END_SRC
 
-Note first that the default sequence in \Rs is a column vector, and
-not a row vector.  We would like to \code{apply} a function to each
+Note first that the default sequence in =R= is a column vector, and
+not a row vector.  We would like to =apply= a function to each
 column of $\A$, specifically a function that multiplies each column
 in-place by $\e$.  We must supply a 2 to ensure that the function is
 applied to the second dimension (columns) of $\A$:
@@ -196,7 +192,7 @@ apply(A, 2, function(x) {x * e})
 : [2,]    4   10
 : [3,]    9   18
 
-\k The function that is applied is anonymous, but it could also be
+The function that is applied is anonymous, but it could also be
 bound to a variable -- just as a matrix is bound to a variable:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
@@ -211,18 +207,18 @@ apply(A, 2, whoop)
 : [3,]    9   18
 
 We will often need to define an identity matrix of dimension $n$, or
-$\In$.  This is quick using \code{diag}:
+$\In$.  This is quick using =diag=:
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
 I <- diag(5)
 #+END_SRC
 
 There are many ways to calculate the trace of $\I_5$.  One method has
-been bundled into a function, called \code{tr()}, that is included in
-a packaged called \code{"psych"} which is not included in the base
-distribution of \R.  We will need to grab and call the library to have
-access to the function, installing it with the command
-\code{install.packages("psych")}.  For this, you'll need an internet
+been bundled into a function, called =tr()=, that is included in a
+packaged called =psych= which is not included in the base distribution
+of =R=.  We will need to grab and call the library to have access to
+the function, installing it with the command
+=install.packages("psych")=.  For this, you'll need an internet
 connection.
 
 #+BEGIN_SRC R :results output :exports both :session :tangle yes
