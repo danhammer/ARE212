@@ -4,8 +4,6 @@
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
-#+LATEX: \newcommand{\Rs}{\texttt{R} }
-#+LATEX: \newcommand{\R}{\texttt{R}}
 #+LATEX: \newcommand{\Rsq}{R^{2}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
@@ -30,7 +28,6 @@
 #+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
-#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
@@ -40,7 +37,7 @@ regression.  First, we must create a random matrix, where each
 variable is drawn from a standard uniform distribution.  All elements
 are independent and identically distributed, so we can create a very
 long, random vector and reshape it into a rectangular matrix.  For
-convenience and practice writing functions in $\R$, we show a general
+convenience and practice writing functions in =R=, we show a general
 function that accepts the dimensions ($n$ rows and $k$ columns) of the
 matrix.  The function generates a long vector of length $n \cdot k$
 and then reshapes it into an $n \times k$ matrix.
@@ -52,7 +49,7 @@ and then reshapes it into an $n \times k$ matrix.
   }
 #+end_src
 
-The function bound to \code{random.mat()} behaves as we would expect:
+The function bound to =random.mat()= behaves as we would expect:
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   random.mat(3,2)
@@ -116,7 +113,7 @@ symmetric and idempotent, we can rewrite Eq. (\ref{eq:rsq}) in terms
 of matrices already defined, thereby simplifying the subsequent code
 dramatically.  From my limited experience with programming, the best
 code is that which reflects the core idea of the procedure; more time
-spent with a pen and paper and not in $\Rs$ will almost always yield
+spent with a pen and paper and not in =R= will almost always yield
 more readable code, and more readable code yields fewer errors and
 suggests quick extensions.  That said, note that $\Xsp_{2}\Xs_{2} =
 \Xp_2\Ap\A\X_2 = \Xp_2\A\A\X_2 = \Xp_2\A\X_2$ and similarly that
@@ -143,7 +140,7 @@ dependent vector and associated cofactor matrix:
 Without some penalty for addtional cofactors, the $\Rsq$ will
 monotonically increase with the number of columns in the cofactor
 matrix $\X$.  We can plot this function, mostly as an introduction to
-very simple plots in \R. 
+very simple plots in =R=. 
 
 #+begin_src R :results output graphics :exports both :file inserts/graph1.png :tangle yes :session
   n <- nrow(X2)
@@ -163,4 +160,4 @@ It may be difficult to get a sense of the shape of the curve based on
 a single draw for the random matrix.  We can calculate the
 relationship between $\Rsq$ and the number of cofactors --- or we can
 bootstrap an estimate for each index, which we will do in a subsequent
-section to illustrate bootstrapping in \R.
+section to illustrate bootstrapping in =R=.
