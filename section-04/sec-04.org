@@ -175,3 +175,14 @@ the joint test.  Simplification failed.  Let's try again.
 
 It worked!  And the probability of observing the F-statistic with
 degrees of freedom $J=2$ and $n-k = 71$ is printed as well.  
+
+#+begin_src R :results output graphics :exports both :file inserts/us-mkts.png :tangle yes :session
+  ols <- cbind(beta.vec, 0)
+  wls <- cbind(wls.beta.vec, 1)
+  data <- data.frame(rbind(ols, wls))
+  names(data) <- c("beta", "method")
+  data$mt <- "ols"
+  data$mt[data$method==1] <- "wls"
+  m <- ggplot(data, aes(x=beta, fill=mt))
+  m + geom_density(alpha=0.2)
+#+end_src
