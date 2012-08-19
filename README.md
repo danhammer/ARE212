@@ -37,6 +37,8 @@ The sections are organized as follows:
 
 [`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Hypothesis testing
 
+[`section-05`](https://github.com/danhammer/ARE212/tree/master/section-05) Efficiency of GLS and `ggplot2`
+
 [`section-11`](https://github.com/danhammer/ARE212/tree/master/section-11) Spatial analysis in R
 
 # Help me write this!  
