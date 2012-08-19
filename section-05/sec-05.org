@@ -39,12 +39,12 @@
 This section will briefly walk through two general concepts, one
 econometric and one =R= oriented.  We will examine the characteristics
 of generalized least squares (GLS), and specifically the efficiency
-gains from feasible generalized least squares (FGLS).  This is the
-econometric concepts.  We will then recreate the graphs from Figures
-2.6 and 2.7, roughly, in the notes using =ggplot2= a very popular,
-very powerful graphing package in =R=.  This is part is optional,
-especially since it is only a very brief treatment of the package ---
-there is a lot more to learn. \\
+gains from a special case of GLS, weighted least squares (WLS).  This
+is the econometric concepts.  We will then recreate the graphs from
+Figures 2.6 and 2.7, roughly, in the notes using =ggplot2= a very
+popular, very powerful graphing package in =R=.  This is part is
+optional, especially since it is only a very brief treatment of the
+package --- there is a lot more to learn. \\
 
 Let $x \sim U(0,2000)$ and $\epsilon \sim N(0,(x/1000)^2)$.
 The underlying population in (2.102) is given as $$y_i = \alpha + x_i
@@ -75,7 +75,7 @@ this section, rather than both parameters.
 #+end_src
 
 #+RESULTS:
-: [1] 1.499978
+: [1] 1.499929
 
 Let's package this into a function, called =rnd.beta=, so that we can
 collect the OLS parameter for an arbitrary number of random samples,
@@ -107,8 +107,8 @@ estimated $\bh$ from a a different random sample for each call:
 #+end_src
 
 #+RESULTS:
-: [1] 1.499422
-: [1] 1.500033
+: [1] 1.461774
+: [1] 1.475344
 
 This is convenient for bootstrapping without loops, but rather
 applying the function to a list of effective indices.[fn:: This is
@@ -122,47 +122,47 @@ typos.} Now replicating the process for $B$ draws is straightforward:
   B <- 1000
   beta.vec <- sapply(1:B, rnd.beta)
   mean(beta.vec)
-  sd(beta.vec)
 #+end_src
 
 #+RESULTS:
-: [1] 1.499989
-: [1] 0.0006787812
+: [1] 1.499225
 
 Alright.  Looking good.  The average of the simulated sample is much
 closer to $\beta$ than any individual call of =rnd.beta=, suggesting
 that the distribution of the simulated parameters will be
 appropriately centered.  Now, let's create another, similar function
-that returns the FGLS estimates.
+that returns the WLS estimates.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-rnd.fgls.beta <- function(i) {
+rnd.wls.beta <- function(i) {
   x <- runif(n)
-  eps <- rnorm(n, 0, sqrt(x/10))
-  y <- 0.5 + x*1.5 + eps
-  X <- cbind(1, x)
-  C <- diag(1/sqrt(sapply(x,function(x){x/10})))
+  y <- 0.5 + x*1.5 + rnorm(n, 0, sqrt(x/10))
+  C <- diag(1/sqrt(x/10))
   y.wt <- C %*% y
-  X.wt <- C %*% X
-  b.fgls <- solve(t(X.wt) %*% X.wt) %*% t(X.wt) %*% y.wt
-  beta <- b.fgls[2]
+  X.wt <- C %*% cbind(1, x)
+  param.wls <- solve(t(X.wt) %*% X.wt) %*% t(X.wt) %*% y.wt
+  beta <- param.wls[2]
   return(beta)
 }
-  fgls.beta.vec <- sapply(1:B, rnd.fgls.beta)
+wls.beta.vec <- sapply(1:B, rnd.wls.beta)
 #+end_src
 
 #+RESULTS:
-: [1] 1.5
-: [1] 1.194766e-05
+
+We now have two collections of parameter estimates, one based on OLS
+and another based on WLS.  It is straightforward to plot two separate
+histograms using =R='s core histogram plotting function =hist()=.
+However, we can use this to introduce a more flexible, powerful
+graphing package called =ggplot2=.  
 
 #+begin_src R :results output graphics :exports both :file inserts/hist.png :tangle yes :session
   library(ggplot2)
   ols <- cbind(beta.vec, 0)
-  fgls <- cbind(fgls.beta.vec, 1)
-  data <- data.frame(rbind(ols, fgls))
+  wls <- cbind(wls.beta.vec, 1)
+  data <- data.frame(rbind(ols, wls))
   names(data) <- c("beta", "mt")
   data$method <- "ols"
-  data$method[data$mt==1] <- "fgls"
+  data$method[data$mt==1] <- "wls"
   m <- ggplot(data, aes(x=beta, ..density.., fill=method))
   m + geom_density(alpha=0.2)
 #+end_src
