@@ -76,7 +76,7 @@ cd ~/Dropbox/github/danhamer/ARE212/section-04
 pdflatex -shell-escape sec-04
 ```
 
-Also, ensure that you have the proper
+Ensure that you have the proper
 [`minted.sty`](http://www.ctan.org/pkg/minted) file by downloading the
 zipfile, installing it, and then ensuring that LaTeX knows where
 everything is:
@@ -86,6 +86,15 @@ unzip minted.zip
 cd minted/
 latex minted.ins
 sudo texhash
+```
+
+Finally, you will have to add the following to your `.emacs.d/init.el`
+file, and make sure it doesn't conflict with anything else in there:
+
+```emacs
+(require 'org-latex)
+(setq org-export-latex-listings 'minted)
+(add-to-list 'org-export-latex-packages-alist '("" "minted"))
 ```
 
 # Spatial analysis in R
