@@ -53,7 +53,7 @@ objective is to plot the simulated sampling distribution of the OLS
 estimator applied to $B = 10,000$ draws, each of size $n = 1000$.
 First, let's generate the sample data for one draw.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   n <- 1000
   x <- runif(n, min=0, max=2000)
   eps <- rnorm(n, 0, sqrt((x/1000)^2))
@@ -67,7 +67,7 @@ Now we can calculate the standard OLS parameter vector $[\ah
 bound to a column of ones.  We will only examine $\hat{\beta}$ for
 this section, rather than both parameters.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   X <- cbind(1, x)
   params <- solve(t(X) %*% X) %*% t(X) %*% y
   beta <- params[2]
@@ -82,7 +82,7 @@ collect the OLS parameter for an arbitrary number of random samples,
 noting that $n$ is a constant so we may as well keep it out of the
 function so that $1000$ is not reassigned thousands of times to $n$.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
 rnd.beta <- function(i) {
   # the argument `i` is not used within the function, but rather to
   # index the function call; useful for =apply= functions
@@ -101,7 +101,7 @@ rnd.beta <- function(i) {
 Since there aren't any supplied arguments, the function will return an
 estimated $\bh$ from a a different random sample for each call:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   rnd.beta()
   rnd.beta()
 #+end_src
@@ -118,7 +118,7 @@ compact by mapping across indices rather than incrementing an index
 within a =for= loop; the code is more readable and less prone to
 typos.} Now replicating the process for $B$ draws is straightforward:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   B <- 1000
   beta.vec <- sapply(1:B, rnd.beta)
   mean(beta.vec)
@@ -133,7 +133,7 @@ that the distribution of the simulated parameters will be
 appropriately centered.  Now, let's create another, similar function
 that returns the WLS estimates.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
 rnd.wls.beta <- function(i) {
   x <- runif(n)
   y <- 0.5 + x*1.5 + rnorm(n, 0, sqrt(x/10))
@@ -155,7 +155,7 @@ histograms using =R='s core histogram plotting function =hist()=.
 However, we can use this to introduce a more flexible, powerful
 graphing package called =ggplot2=.  
 
-#+begin_src R :results output graphics :exports both :file inserts/hist.png :tangle yes :session
+#+begin_src r :results output graphics :exports both :file inserts/hist.png :tangle yes :session
   library(ggplot2)
   ols <- cbind(beta.vec, 0)
   wls <- cbind(wls.beta.vec, 1)

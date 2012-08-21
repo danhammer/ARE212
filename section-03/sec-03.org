@@ -42,7 +42,7 @@ function that accepts the dimensions ($n$ rows and $k$ columns) of the
 matrix.  The function generates a long vector of length $n \cdot k$
 and then reshapes it into an $n \times k$ matrix.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   random.mat <- function(n, k) {
     v <- runif(n*k)
     matrix(v, nrow=n, ncol=k)
@@ -51,7 +51,7 @@ and then reshapes it into an $n \times k$ matrix.
 
 The function bound to =random.mat()= behaves as we would expect:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   random.mat(3,2)
 #+end_src
 
@@ -66,7 +66,7 @@ demeaning matrix $\A$ of dimension $n$.  The following function just
 wraps a few algebraic maneuvers, so that subsequent code is easier to
 read.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   demean.mat <- function(n) {
     ones <- rep(1, n)
     diag(n) - (1/n) * ones %*% t(ones)
@@ -77,7 +77,7 @@ As is described in the notes, pre-multiplying a matrix $\B$ by $\A$
 will result in a matrix $\C = \A\B$ of deviations from the column
 means of $\B$. Check that this is true.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   A <- demean.mat(3)
   B <- matrix(1:9, nrow=3)
   col.means <- apply(B, 2, mean)
@@ -92,7 +92,7 @@ Alright, we're ready to apply the functions to real data in order to
 calculate the centered $\Rsq$. First, read in the data to conform to
 equation (2.37) on page 14 of the lecture notes, and identify the
 number of observations $n$ for later use:
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   data <- read.csv("../data/auto.csv", header=TRUE)
   names(data) <- c("price", "mpg", "weight")
   y <- matrix(data$price)
@@ -120,7 +120,7 @@ suggests quick extensions.  That said, note that $\Xsp_{2}\Xs_{2} =
 $\ysp\ys = \yp\A\y$ and $\Xsp_{2}\ys = \Xp_{2}\A\y$. If we write a
 more general function, though, we can apply it to an arbitrary
 dependent vector and associated cofactor matrix:
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   R.squared <- function(y, X) {
     n <- nrow(X)
     A <- demean.mat(n)
@@ -142,7 +142,7 @@ monotonically increase with the number of columns in the cofactor
 matrix $\X$.  We can plot this function, mostly as an introduction to
 very simple plots in =R=. 
 
-#+begin_src R :results output graphics :exports both :file inserts/graph1.png :tangle yes :session
+#+begin_src r :results output graphics :exports both :file inserts/graph1.png :tangle yes :session
   n <- nrow(X2)
   X.rnd <- random.mat(n, 70)
   res <- rep(0, 70)

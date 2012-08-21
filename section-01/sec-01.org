@@ -68,7 +68,7 @@ B <- matrix(1:6, ncol=3, byrow=TRUE)
 The \texttt{=} operator also assigns values, with a slightly different
 behavior; and it is common practice to use the \texttt{=} assignment
 for function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for a
-description of other standard practices in \R.]  The \texttt{==}
+description of other standard practices in =R=.]  The \texttt{==}
 comparison operator will yield \texttt{TRUE} or \texttt{FALSE}:
 
 #+BEGIN_SRC r :results output :exports both :session :tangle yes
@@ -119,7 +119,7 @@ B %*% A
 : [2,]   32   77
 
 The dimensions have to line up properly for matrix multiplication to
-be appropriately applied, otherwise \Rs returns an error, as is the
+be appropriately applied, otherwise =R= returns an error, as is the
 case with the product $\B\Ap$:
 
 #+BEGIN_SRC r :results output :exports both :session :tangle yes

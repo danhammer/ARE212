@@ -36,7 +36,7 @@
 #+STARTUP: fninline
 
 This is the fun (read: optional!) section to show how to manipulate
-and visualize spatial data in $\R$.  It seems more fun to start with a
+and visualize spatial data in =R=.  It seems more fun to start with a
 data story; and work through some basic analysis. \\
 
 Data.gov is a data repository administered by the US government with
@@ -56,7 +56,7 @@ distribution of farmers markets on a a base map of the United States.
 To do this, you will need to install and then load the following
 libraries:
 
-#+begin_src R :results output graphics :exports both :file inserts/us-mkts.png :tangle yes :session
+#+begin_src r :results output graphics :exports both :file inserts/us-mkts.png :tangle yes :session
   library(maps)
   library(maptools)
   library(RColorBrewer)
@@ -79,7 +79,7 @@ useful information, as seen in the following figure.  So, instead,
 lets only consider the farmers markets in Colorado, Utah, New Mexico,
 and Arizona.  There are 354 farmers markets in these four states.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   statelist <- c("New Mexico", "Colorado", "Arizona", "Utah")
   idx <- is.element(data$State, statelist) 
   state.data <- data[idx, ]
@@ -102,7 +102,7 @@ $\X$ and recode the string variables to 0-1 binary variables.  Note
 that the default numeric levels of the string variables are 2 and 3,
 so subtracting 2 will yield the desired result.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   X <- state.data[, 8:ncol(state.data)]
   for(i in names(X)) {
     X[[i]] <- as.numeric(X[[i]]) - 2
@@ -121,7 +121,7 @@ will use to color the points on the map.  There are many other
 attributes that are collected in =cl=; three of them are listed
 below.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   cl <- kmeans(X, 4)
   names(cl)[1:3]
 #+end_src
@@ -138,7 +138,7 @@ colors to 4, one for each state; and the =brewer.pal()= function sets
 separate color codes for the number of supplied classes according to
 the color scheme =Set1=.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src r :results output graphics :exports both :tangle yes :session
   nclr <- 4
   clr.set <- brewer.pal(nclr, "Set1")
 #+end_src
@@ -150,7 +150,7 @@ function then maps the color codes to each point in the cluster
 vector; and this is the schema that is used to color the points on the
 map.
 
-#+begin_src R :results output silent :exports both :tangle yes :session
+#+begin_src r :results output silent :exports both :tangle yes :session
   class <- classIntervals(cl$cluster, nclr, style = "pretty")
   colcode <- findColours(class, cl$cluster)
 #+end_src
@@ -158,7 +158,7 @@ map.
 The map is generated in much the same way as the full US map, except
 that the extent is limited by a latitude-longitude bounding box.
 
-#+begin_src R :results graphics silent :exports both :file inserts/sel-mkts.png :tangle yes :session
+#+begin_src r :results graphics silent :exports both :file inserts/sel-mkts.png :tangle yes :session
   map("state", interior = FALSE, 
       xlim = c(-117, -101), ylim = c(28, 43))
   map("state", boundary = FALSE, col="gray", add = TRUE, 
@@ -175,7 +175,7 @@ across the border have characteristics that are different enough to
 "correctly" cluster them by state.  There must be something about
 state regulations that are particularly imposing in New Mexico. \\
 
-This is just one of many neat examples about how to use $\Rs$ to
+This is just one of many neat examples about how to use =R= to
 examine spatial variation; and to effectively uncover some spatial,
 data generating processes that are not obvious from looking at the
 data in a matrix or spreadsheet.  More to come!
