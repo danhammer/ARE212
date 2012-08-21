@@ -91,7 +91,7 @@ sudo texhash
 Finally, you will have to add the following to your `.emacs.d/init.el`
 file, and make sure it doesn't conflict with anything else in there:
 
-```emacs
+```lisp
 (require 'org-latex)
 (setq org-export-latex-listings 'minted)
 (add-to-list 'org-export-latex-packages-alist '("" "minted"))
