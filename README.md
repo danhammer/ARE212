@@ -67,6 +67,27 @@ a PDF document, you may have to compile it twice or reload the buffer
 using `C-u M-x org-reload`.  To tangle the code within the org-mode
 document to an `.R` script, you can use the key binding `C-c C-v t`.
 
+You can highlight code by using the `minted` package in LaTeX.  For
+this, from the command line, make sure that you invoke `pdflatex` with
+the `-shell-escape` flag.  For example,
+
+```bash
+cd ~/Dropbox/github/danhamer/ARE212/section-04
+pdflatex -shell-escape sec-04
+```
+
+Also, ensure that you have the proper
+[`minted.sty`](http://www.ctan.org/pkg/minted) file by downloading the
+zipfile, installing it, and then ensuring that LaTeX knows where
+everything is:
+
+```bash
+unzip minted.zip
+cd minted/
+latex minted.ins
+sudo texhash
+```
+
 # Spatial analysis in R
 
 This is of personal interest.  R is ideal for econometric analysis;
