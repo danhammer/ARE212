@@ -4,6 +4,8 @@
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\Rb}{{\bf R}}
 #+LATEX: \newcommand{\Rbp}{{\bf R}^{\prime}}
 #+LATEX: \newcommand{\Rsq}{R^{2}}

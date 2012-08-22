@@ -5,6 +5,8 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
