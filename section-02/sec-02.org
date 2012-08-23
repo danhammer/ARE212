@@ -1,11 +1,24 @@
 #+AUTHOR:      Dan Hammer
 #+TITLE:       ARE212: Section 02
 #+OPTIONS:     toc:nil num:nil 
+#+LATEX_CLASS: article
+#+LaTeX_HEADER: \usepackage{listings}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{subfigure}
-#+LATEX_HEADER: \RequirePackage{fancyvrb}
-#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
+
+#+LATEX:    \definecolor{darkgreen}{rgb}{0,0.6,0}
+#+LATEX:    \lstset{
+#+LATEX:    language=R,
+#+LATEX:    basicstyle=\ttfamily,
+#+LATEX:    commentstyle=\ttfamily\color{darkgreen},
+#+LATEX:    stringstyle=\ttfamily\color{red},
+#+LATEX:    emph={<-}, emphstyle=\color{darkgreen},
+#+LATEX:    emph={[2]TRUE}, emphstyle={[2]\color{darkgreen}},
+#+LATEX:    emph={[3]FALSE}, emphstyle={[3]\color{darkgreen}},
+#+LATEX:    }
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
@@ -28,15 +41,13 @@ first step is to read the data set =auto.csv= from the relative path.
 You can also download it from [[https://github.com/danhammer/ARE212/blob/master/data/auto.csv][here]].  We set the option =header= to
 =TRUE=, which treats the first line of the CSV file as variable names,
 rather than an observation.
-
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   data <- read.csv("../data/auto.csv", header=TRUE)
 #+end_src
 
 #+RESULTS:
 
 We can read the names from the data set; but they aren't much help.
-
 #+begin_src r :results output graphics :exports both :tangle yes :session
   names(data)
 #+end_src
@@ -49,7 +60,6 @@ names.  The next command is an example of destructuring.  There are
 three elements in both the original and new list; and each element in
 the original list is reassigned based on its position in the list,
 e.g., the =V1= header is replaced by =price=.
-
 #+begin_src r :results output graphics :exports both :tangle yes :session
   names(data) <- c("price", "mpg", "weight")
 #+end_src
@@ -57,7 +67,6 @@ e.g., the =V1= header is replaced by =price=.
 #+RESULTS:
 
 To get a sense of the data, list the first six observations:
-
 #+begin_src r :results output graphics :exports both :tangle yes :session
   head(data)
 #+end_src
