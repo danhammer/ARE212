@@ -48,7 +48,7 @@ rather than an observation.
 #+RESULTS:
 
 We can read the names from the data set; but they aren't much help.
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   names(data)
 #+end_src
 
@@ -60,14 +60,14 @@ names.  The next command is an example of destructuring.  There are
 three elements in both the original and new list; and each element in
 the original list is reassigned based on its position in the list,
 e.g., the =V1= header is replaced by =price=.
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   names(data) <- c("price", "mpg", "weight")
 #+end_src
 
 #+RESULTS:
 
 To get a sense of the data, list the first six observations:
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   head(data)
 #+end_src
 
@@ -84,7 +84,7 @@ With the columns appropriately names, we can refer to particular
 variables within the data set using the unique indexing in =R=, where
 data objects tend to be variants of lists and nested lists.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   head(data$mpg)
 #+end_src
 
@@ -96,7 +96,7 @@ the model by referring to the column headers within the specified data
 set --- along with a 1 to indicate a column of ones. =R= is unique for
 intelligently snapping the dimensions of comparable matrices.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   lm(price ~ 1 + mpg + weight, data=data)
 #+end_src
 
@@ -115,7 +115,7 @@ within the linear model.  We can do the same thing for the =R=
 session, which tends to simplify notation.  The columns can be
 referenced directly after the data set has been attached.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   attach(data)
   head(mpg)
 #+end_src
@@ -132,7 +132,7 @@ characteristics, along with a column of ones prepended.  The
 =cbind()= function binds the columns horizontally and coerces the
 =matrix= class.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   y <- matrix(price)
   X <- cbind(1, mpg, weight)
 #+end_src
@@ -142,7 +142,7 @@ characteristics, along with a column of ones prepended.  The
 Check that the number of observations are the same in both the
 dependent vector $\y$ and the cofactor matrix $\X$.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 dim(X)[1] == nrow(y)
 #+end_src
 
@@ -152,7 +152,7 @@ dim(X)[1] == nrow(y)
 Using the matrix operations described in the previous section, we can
 quickly estimate the ordinary least squared parameter vector.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 beta <- solve(t(X) %*% X) %*% t(X) %*% y
 print(beta)
 #+end_src
@@ -168,7 +168,7 @@ thankfully.  Digging deeper into the numbers, consider the projection
 matrix $\P = \X(\Xp\X)^{-1}\Xp$ and the residual maker matrix $\M =
 \In - \P$
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 n <- nrow(y)
 P <- X %*% solve(t(X) %*% X) %*% t(X)
 M <- diag(n) - P
@@ -183,7 +183,7 @@ the supplied objects are "close enough" to be considered the same.
 The problem is the limits of machine precision, and rounding at the
 tail ends of floating point numbers.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(M, t(M))
 #+end_src
 
@@ -194,7 +194,7 @@ If we want to test for exact equality, we set the tolerance to
 zero, and the function will return a message with the mean relative
 difference between elements --- which is clearly very close to zero.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(M, t(M), tol=0)
 #+end_src
 
@@ -204,7 +204,7 @@ all.equal(M, t(M), tol=0)
 The residual maker matrix should also be idempotent, or $\M =
 \M\Mp$.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(M, M %*% t(M))
 #+end_src
 
@@ -221,7 +221,7 @@ sum of the residual and estimated sum of squares:
 \end{equation}
 First, define the relevant variables:
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 e <- M %*% y
 y.hat <- P %*% y
 rss <- t(e) %*% e
@@ -233,7 +233,7 @@ tss <- t(y) %*% y
 
 Then check the condition in Eq. (\ref{eq:ss}):
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 all.equal(tss, ess + rss)
 #+end_src
 
