@@ -1,24 +1,14 @@
-#+AUTHOR:      Dan Hammer
-#+TITLE:       ARE212: Section 02
+#+AUTHOR:     
+#+TITLE:      
 #+OPTIONS:     toc:nil num:nil 
-#+LATEX_CLASS: article
-#+LaTeX_HEADER: \usepackage{listings}
-#+LATEX_HEADER: \RequirePackage{fancyvrb}
-#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
 #+LATEX_HEADER: \usepackage{subfigure}
-
-#+LATEX:    \definecolor{darkgreen}{rgb}{0,0.6,0}
-#+LATEX:    \lstset{
-#+LATEX:    language=R,
-#+LATEX:    basicstyle=\ttfamily,
-#+LATEX:    commentstyle=\ttfamily\color{darkgreen},
-#+LATEX:    stringstyle=\ttfamily\color{red},
-#+LATEX:    emph={<-}, emphstyle=\color{darkgreen},
-#+LATEX:    emph={[2]TRUE}, emphstyle={[2]\color{darkgreen}},
-#+LATEX:    emph={[3]FALSE}, emphstyle={[3]\color{darkgreen}},
-#+LATEX:    }
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
@@ -35,6 +25,9 @@
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
+
+*Ordinary Least Squares* \hfill
+*ARE212*: Section 02 \\ \\
 
 This section is intended to introduce linear regression in \R.  The
 first step is to read the data set =auto.csv= from the relative path.
@@ -148,6 +141,18 @@ dim(X)[1] == nrow(y)
 
 #+RESULTS:
 : [1] TRUE
+
+Before preceding, we should =detach= the data frame, so that if we
+reload the =R= script, there won't be any naming conflicts.  The =X=
+and =y= objects will persist, as will =data$mpg=, but we will no
+longer be able to call the variables without referencing the data
+frame.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  detach(data)
+#+end_src
+
+#+RESULTS:
 
 Using the matrix operations described in the previous section, we can
 quickly estimate the ordinary least squared parameter vector.

@@ -1,0 +1,48 @@
+#+AUTHOR:     
+#+TITLE:      
+#+OPTIONS:     toc:nil num:nil 
+#+LATEX_HEADER: \usepackage{mathrsfs}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
+#+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
+#+LATEX: \setlength{\parindent}{0in}
+#+STARTUP: fninline
+
+*Web Scraping in* \texttt{R} \hfill
+*ARE212*: Section 12 \\ \\
+
+The purpose of this section is to showcase the ability to scrape and
+process web data using =R=.  This tutorial draws heavily from a [[http://schamberlain.github.com/2012/08/get-ecoevo-journal-titles/][blog
+post]] on a great blog by two biologists and experienced =R=
+users. Suppose we want to find the number of available environmental
+economics journals.  There are too many.  Definitely.  But suppose we
+want to find out just how many.  To do this, we can visit
+[[crossref.org]], which is a citation-linking network with a list of all
+journals and their Digital Object Identifiers (DOIs).  We will query
+the list from within =R= and then parse the returned content to list
+journals with certain attributes.  For this, we'll need to load the
+following libraries:
+
+#+begin_src R :results output silent :exports both :tangle yes :session
+library(XML)
+library(RCurl)
+library(stringr)
+#+end_src

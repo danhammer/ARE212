@@ -41,6 +41,8 @@ The sections are organized as follows:
 
 [`section-11`](https://github.com/danhammer/ARE212/tree/master/section-11) Spatial analysis in R
 
+[`section-12`](https://github.com/danhammer/ARE212/tree/master/section-12) Web scraping
+
 # Help me write this!  
 
 This project can and _should_ be treated like any other open source,

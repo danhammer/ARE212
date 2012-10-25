@@ -1,9 +1,12 @@
-#+AUTHOR:      Dan Hammer
-#+TITLE:       ARE212: Section 03
+#+AUTHOR:     
+#+TITLE:      
 #+OPTIONS:     toc:nil num:nil 
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
 #+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\Rsq}{R^{2}}
@@ -16,6 +19,7 @@
 #+LATEX: \renewcommand{\X}{{\bf X}}
 #+LATEX: \renewcommand{\M}{{\bf M}}
 #+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
 #+LATEX: \renewcommand{\B}{{\bf B}}
 #+LATEX: \renewcommand{\C}{{\bf C}}
 #+LATEX: \renewcommand{\P}{{\bf P}}
@@ -32,6 +36,9 @@
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
+
+*Goodness of Fit* \hfill
+*ARE212*: Section 03 \\ \\
 
 The idea behind this section is to study the behavior of the centered
 and uncentered $\Rsq$ as cofactors are incrementally included in the
@@ -141,10 +148,13 @@ dependent vector and associated cofactor matrix:
 
 Without some penalty for addtional cofactors, the $\Rsq$ will
 monotonically increase with the number of columns in the cofactor
-matrix $\X$.  We can plot this function, mostly as an introduction to
-very simple plots in =R=. 
+matrix $\X$.  This function is plotted in Figure (\ref{fig:r}), mostly
+as an introduction to very simple plots in =R=.
 
-#+begin_src r :results output graphics :exports both :file inserts/graph1.png :tangle yes :session
+#+ATTR_LaTeX: width=0.5\textwidth
+#+CAPTION:    $\Rsq$ rises monotonically as a function of columns
+#+LABEL:    fig:r
+#+begin_src R :results output graphics :file inserts/graph1.png :width 800 :height 800 :session :tangle yes :exports both
   n <- nrow(X2)
   X.rnd <- random.mat(n, 70)
   res <- rep(0, 70)

@@ -1,9 +1,12 @@
-#+AUTHOR:      Dan Hammer
-#+TITLE:       ARE212: Section 05
+#+AUTHOR:     
+#+TITLE:      
 #+OPTIONS:     toc:nil num:nil 
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
 #+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\Rb}{{\bf R}}
@@ -38,6 +41,9 @@
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
+\textbf{Generalized Least Squares and} \texttt{ggplot} \hfill
+*ARE212*: Section 05 \\ \\
+
 This section will briefly walk through two general concepts, one
 econometric and one =R= oriented.  We will examine the characteristics
 of generalized least squares (GLS), and specifically the efficiency
@@ -48,14 +54,14 @@ popular, very powerful graphing package in =R=.  This is part is
 optional, especially since it is only a very brief treatment of the
 package --- there is a lot more to learn. \\
 
-Let $x \sim U(0,2000)$ and $\epsilon \sim N(0,(x/1000)^2)$.
-The underlying population in (2.102) is given as $$y_i = \alpha + x_i
-\beta + \epsilon,$$ where $\alpha = 0.5$ and $\beta = 1.5$.  The
+Let $x \sim U(0,2000)$ and $\epsilon \sim N(0,(x/1000)^2)$.  The
+underlying data generating process in (2.102) is $y_i = \alpha + x_i
+\beta + \epsilon$, where $\alpha = 0.5$ and $\beta = 1.5$.  The
 objective is to plot the simulated sampling distribution of the OLS
 estimator applied to $B = 10,000$ draws, each of size $n = 1000$.
 First, let's generate the sample data for one draw.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   n <- 1000
   x <- runif(n, min=0, max=2000)
   eps <- rnorm(n, 0, sqrt((x/1000)^2))
@@ -69,7 +75,7 @@ Now we can calculate the standard OLS parameter vector $[\ah
 bound to a column of ones.  We will only examine $\hat{\beta}$ for
 this section, rather than both parameters.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   X <- cbind(1, x)
   params <- solve(t(X) %*% X) %*% t(X) %*% y
   beta <- params[2]
@@ -77,17 +83,15 @@ this section, rather than both parameters.
 #+end_src
 
 #+RESULTS:
-: [1] 1.499929
+: [1] 1.50004
 
 Let's package this into a function, called =rnd.beta=, so that we can
 collect the OLS parameter for an arbitrary number of random samples,
 noting that $n$ is a constant so we may as well keep it out of the
 function so that $1000$ is not reassigned thousands of times to $n$.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 rnd.beta <- function(i) {
-  # the argument `i` is not used within the function, but rather to
-  # index the function call; useful for =apply= functions
   x <- runif(n)
   eps <- rnorm(n, 0, sqrt(x/10))
   y <- 0.5 + x*1.5 + eps
@@ -103,14 +107,14 @@ rnd.beta <- function(i) {
 Since there aren't any supplied arguments, the function will return an
 estimated $\bh$ from a a different random sample for each call:
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   rnd.beta()
   rnd.beta()
 #+end_src
 
 #+RESULTS:
-: [1] 1.461774
-: [1] 1.475344
+: [1] 1.512709
+: [1] 1.548704
 
 This is convenient for bootstrapping without loops, but rather
 applying the function to a list of effective indices.[fn:: This is
@@ -120,14 +124,14 @@ compact by mapping across indices rather than incrementing an index
 within a =for= loop; the code is more readable and less prone to
 typos.} Now replicating the process for $B$ draws is straightforward:
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   B <- 1000
   beta.vec <- sapply(1:B, rnd.beta)
   mean(beta.vec)
 #+end_src
 
 #+RESULTS:
-: [1] 1.499225
+: [1] 1.499715
 
 Alright.  Looking good.  The average of the simulated sample is much
 closer to $\beta$ than any individual call of =rnd.beta=, suggesting
@@ -135,7 +139,7 @@ that the distribution of the simulated parameters will be
 appropriately centered.  Now, let's create another, similar function
 that returns the WLS estimates.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 rnd.wls.beta <- function(i) {
   x <- runif(n)
   y <- 0.5 + x*1.5 + rnorm(n, 0, sqrt(x/10))
@@ -157,16 +161,13 @@ histograms using =R='s core histogram plotting function =hist()=.
 However, we can use this to introduce a more flexible, powerful
 graphing package called =ggplot2=.  
 
-#+begin_src r :results output graphics :exports both :file inserts/hist.png :tangle yes :session
+#+CAPTION: Relative efficiency of WLS
+#+LABEL: fig:dens
+#+begin_src R :results output graphics :file inserts/hist.png :width 700 :height 400 :session :tangle yes :exports both 
   library(ggplot2)
-  ols <- cbind(beta.vec, 0)
-  wls <- cbind(wls.beta.vec, 1)
-  data <- data.frame(rbind(ols, wls))
-  names(data) <- c("beta", "mt")
-  data$method <- "ols"
-  data$method[data$mt==1] <- "wls"
-  m <- ggplot(data, aes(x=beta, ..density.., fill=method))
-  m + geom_density(alpha=0.2)
+  labels <- c(rep("ols", B), rep("wls", B)) 
+  data <- data.frame(beta=c(beta.vec, wls.beta.vec), method=labels)
+  ggplot(data, aes(x=beta, fill=method)) + geom_density(alpha=0.2)
 #+end_src
 
 #+RESULTS:

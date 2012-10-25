@@ -1,10 +1,12 @@
-#+AUTHOR:      Dan Hammer
-#+TITLE:       ARE212: Section 04
+#+AUTHOR:     
+#+TITLE:      
 #+OPTIONS:     toc:nil num:nil 
 #+LATEX_HEADER: \usepackage{mathrsfs}
-#+LATEX_HEADER: \usepackage{minted}
 #+LATEX_HEADER: \usepackage{graphicx}
-#+LATEX_HEADER: \usepackage{subfigure} 
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\Rb}{{\bf R}}
@@ -37,6 +39,9 @@
 #+LATEX: \renewcommand{\sigs}{\sigma^{2}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
+
+*Hypothesis Testing* \hfill
+*ARE212*: Section 04 \\ \\
 
 This is an introducton to basic hypothesis testing in =R=. We have
 shown that, with a certain set of assumptions, the difference between

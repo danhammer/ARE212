@@ -1,9 +1,12 @@
-#+AUTHOR:      Dan Hammer
-#+TITLE:       ARE212: Section 11
+#+AUTHOR:     
+#+TITLE:      
 #+OPTIONS:     toc:nil num:nil 
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
 #+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\Rb}{{\bf R}}
@@ -37,6 +40,9 @@
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
+*Spatial Analysis in* \texttt{R} \hfill
+*ARE212*: Section 11 \\ \\
+
 This is the fun (read: optional!) section to show how to manipulate
 and visualize spatial data in =R=.  It seems more fun to start with a
 data story; and work through some basic analysis. \\
@@ -58,14 +64,24 @@ distribution of farmers markets on a a base map of the United States.
 To do this, you will need to install and then load the following
 libraries:
 
-#+begin_src r :results output graphics :exports both :file inserts/us-mkts.png :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   library(maps)
   library(maptools)
   library(RColorBrewer)
   library(classInt)
   library(gpclib)
   library(mapdata)
-  
+#+end_src  
+
+#+RESULTS:
+
+The following code plots the map, and presents the results in Figure
+\ref{fig:dens}.
+
+#+CAPTION: Distribution of US farmers markets
+#+LABEL: fig:dens
+#+ATTR_LaTeX: width=0.6\textwidth
+#+begin_src R :results output graphics :file inserts/us-mkts.png :width 700 :height 400 :session :tangle yes :exports both 
   data <- read.csv("../data/farmers-mkts.csv", header=TRUE)
   map("state", interior = FALSE)
   map("state", boundary = FALSE, col = "gray", add = TRUE)
@@ -81,7 +97,7 @@ useful information, as seen in the following figure.  So, instead,
 lets only consider the farmers markets in Colorado, Utah, New Mexico,
 and Arizona.  There are 354 farmers markets in these four states.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   statelist <- c("New Mexico", "Colorado", "Arizona", "Utah")
   idx <- is.element(data$State, statelist) 
   state.data <- data[idx, ]
@@ -104,7 +120,7 @@ $\X$ and recode the string variables to 0-1 binary variables.  Note
 that the default numeric levels of the string variables are 2 and 3,
 so subtracting 2 will yield the desired result.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   X <- state.data[, 8:ncol(state.data)]
   for(i in names(X)) {
     X[[i]] <- as.numeric(X[[i]]) - 2
@@ -123,7 +139,7 @@ will use to color the points on the map.  There are many other
 attributes that are collected in =cl=; three of them are listed
 below.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   cl <- kmeans(X, 4)
   names(cl)[1:3]
 #+end_src
@@ -140,10 +156,12 @@ colors to 4, one for each state; and the =brewer.pal()= function sets
 separate color codes for the number of supplied classes according to
 the color scheme =Set1=.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   nclr <- 4
   clr.set <- brewer.pal(nclr, "Set1")
 #+end_src
+
+#+RESULTS:
 
 There exactly four cluster values to match the four-color palette.
 However, the =classIntervals()= assigns each color in the palette to a
@@ -152,7 +170,7 @@ function then maps the color codes to each point in the cluster
 vector; and this is the schema that is used to color the points on the
 map.
 
-#+begin_src r :results output silent :exports both :tangle yes :session
+#+begin_src R :results output silent :exports both :tangle yes :session
   class <- classIntervals(cl$cluster, nclr, style = "pretty")
   colcode <- findColours(class, cl$cluster)
 #+end_src
@@ -160,7 +178,10 @@ map.
 The map is generated in much the same way as the full US map, except
 that the extent is limited by a latitude-longitude bounding box.
 
-#+begin_src r :results graphics silent :exports both :file inserts/sel-mkts.png :tangle yes :session
+#+CAPTION: Distribution of US farmers markets
+#+LABEL: fig:sel
+#+ATTR_LaTeX: width=0.6\textwidth
+#+begin_src R :results output graphics :exports both :file inserts/sel-mkts.png :width 700 :height 400 :session :tangle yes :exports both 
   map("state", interior = FALSE, 
       xlim = c(-117, -101), ylim = c(28, 43))
   map("state", boundary = FALSE, col="gray", add = TRUE, 
@@ -168,7 +189,8 @@ that the extent is limited by a latitude-longitude bounding box.
   points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
 #+end_src
 
-[[file:inserts/farmers-markets-final.png]]
+#+RESULTS:
+[[file:inserts/sel-mkts.png]]
 
 This is cool.  It is clear that there is some separable variation in
 the characteristics of the markets.  The red points seem to be
