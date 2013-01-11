@@ -1,3 +1,5 @@
+*.pyg
+*.DS_Store
 *.Rhistory
 *.tex
 *.aux

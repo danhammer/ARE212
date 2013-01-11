@@ -1,5 +1,7 @@
-ARE212 - Section Notes
+ARE212
 ======
+
+# Section notes
 
 This is a repository for the latest version of the ARE212 section
 notes.  Each section has its own directory that contains at least
@@ -43,7 +45,7 @@ The sections are organized as follows:
 
 [`section-12`](https://github.com/danhammer/ARE212/tree/master/section-12) Web scraping
 
-# Help me write this!  
+## Help me write this!  
 
 This project can and _should_ be treated like any other open source,
 collaborative coding project.  If you are interested in helping me
@@ -53,7 +55,7 @@ files, and [send a pull
 request](https://help.github.com/articles/using-pull-requests).  I
 will review and merge the changes -- until someone else takes over!
 
-# Org mode notes
+## Org mode notes
 
 If you are running [Emacs](http://www.gnu.org/software/emacs), then
 you have access to [org-mode](http://orgmode.org), an open source
@@ -62,7 +64,7 @@ documentation, and results are all bundled into the same file.  The
 `#+RESULTS` output is automatically generated from the immediately
 preceding code block.
 
-![](http://dl.dropbox.com/u/5365589/org-mode.png)
+![](https://dl.dropbox.com/u/5365589/org-mode.png)
 
 A few things to note.  When you try to compile the `.org` files to
 a PDF document, you may have to compile it twice or reload the buffer
@@ -99,7 +101,7 @@ file, and make sure it doesn't conflict with anything else in there:
 (add-to-list 'org-export-latex-packages-alist '("" "minted"))
 ```
 
-# Spatial analysis in R
+## Spatial analysis in R
 
 This is of personal interest.  R is ideal for econometric analysis;
 but it also has some very convenient facilities for interacting with
