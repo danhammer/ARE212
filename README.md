@@ -64,7 +64,7 @@ documentation, and results are all bundled into the same file.  The
 `#+RESULTS` output is automatically generated from the immediately
 preceding code block.
 
-![](https://dl.dropbox.com/u/5365589/org-mode.png)
+![](http://i.imgur.com/CjpeA.png)
 
 A few things to note.  When you try to compile the `.org` files to
 a PDF document, you may have to compile it twice or reload the buffer
