@@ -6,6 +6,7 @@
 #+LATEX_HEADER: \usepackage{booktabs}
 #+LATEX_HEADER: \usepackage{dcolumn}
 #+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage{coffee}
 #+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
@@ -15,27 +16,29 @@
 #+LATEX: \renewcommand{\cd}{$\circ$ }
 #+STARTUP: fninline
 
-*Econometrics* \hfill
+*Econometrics: Multiple Equation Estimation* \hfill
 *ARE212*: Section Syllabus \\ \hline \\
 \vspace{10pt}
 \begin{tabular}{ l l }
  {\bf Professor}     &  Max Auffhammer                   \\
  {\bf GSI}           &  Dan Hammer                       \\
+ {\bf Section time}       &  Fridays, 11:00AM-12:00PM  \\
+ {\bf Section location}   &  285 CORY  \\
  {\bf e-mail}        &  \email{danhammer@berkeley.edu}  \\
- {\bf twitter}        &  \texttt{@econohammer}  \\
- {\bf Office}        &  Giannini 320                     \\
- {\bf Office hours}  &  TBD                       
+ {\bf twitter}       &  \texttt{@econohammer}  \\
+ {\bf github}       &  \texttt{@danhammer}  
 \end{tabular}
 \vspace{10pt}
 \hline
 
 \bigskip 
 
+
 The purpose of this document is to outline the sections for Max
 Auffhammer's econometrics course, the first semester of the ARE
 econometrics sequence.  The purpose of these sections is to introduce
 =R= for econometrics, illustrating the theory presented in class with
-empirical examples.  Actual data work.  \\
+applied examples.  Actual data work.  \\
 
 This is my first attempt as a graduate student instructor, so be
 gentle.  I tell you this to warn you that the section notes might
@@ -71,6 +74,10 @@ credible threat, since =auffhammer= is an awesome Github handle.]
 The =R= code for each section is posted on the Github site, and should
 run on any machine and any operating system.  Please feel free to
 e-mail me with any questions.  \\
+
+*Office hours*: I don't really use my office on campus.  In fact, I'm
+ not even sure where it is.  Please e-mail me with questions!  I'll
+ respond promptly, over e-mail or in person.\\
 
 *Homework*: Problem sets will be collected at the end of class on the
  specified date.  Ultimately, Max will decide the deductions for late

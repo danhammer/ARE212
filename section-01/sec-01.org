@@ -23,9 +23,9 @@
 \textbf{Matrix operations in \texttt{R}} \hfill
 *ARE212*: Section 01 \\ \\
 
-This section is meant to give a brief introduction to data
-manipulation in =R=, and specifically to the type of data work that
-will be required to support future lectures.
+This first section is meant to give a brief introduction to data
+manipulation in =R= that will support the work in future sections.  It
+may not be exciting, but it's incredibly exciting.
 
 * Creating matrices
 
