@@ -20,23 +20,26 @@
 *ARE212*: Section Syllabus \\ \hline \\
 \vspace{10pt}
 \begin{tabular}{ l l }
- {\bf Professor}     &  Max Auffhammer                   \\
- {\bf GSI}           &  Dan Hammer                       \\
- {\bf Section time}       &  Fridays, 11:00AM-12:00PM  \\
- {\bf Section location}   &  285 CORY  \\
- {\bf e-mail}        &  \email{danhammer@berkeley.edu}  \\
- {\bf twitter}       &  \texttt{@econohammer}  \\
- {\bf github}       &  \texttt{@danhammer}  
+ {\bf Professor}             &  Max Auffhammer                  \\
+ {\bf GSI}                   &  Dan Hammer                      \\
+ {\bf Section time}          &  Fridays, 11:00AM-12:00PM        \\
+ {\bf Section location}      &  285 CORY                        
+ \end{tabular}
+\hfill
+\begin{tabular}{ l l }
+ {\bf Office hours}          &  Tuesdays, 4:00PM-5:00PM         \\
+ {\bf OH location}           &  204 GIANNINI                    \\
+ {\bf e-mail}                &  \email{danhammer@berkeley.edu}  \\
+ {\bf twitter}               &  \email{@econohammer}            \\
 \end{tabular}
 \vspace{10pt}
 \hline
 
 \bigskip 
 
-
 The purpose of this document is to outline the sections for Max
 Auffhammer's econometrics course, the first semester of the ARE
-econometrics sequence.  The purpose of these sections is to introduce
+econometrics sequence.  The purpose of the sections is to introduce
 =R= for econometrics, illustrating the theory presented in class with
 applied examples.  Actual data work.  \\
 
@@ -62,12 +65,21 @@ credible threat, since =auffhammer= is an awesome Github handle.]
 
 \vspace{10pt}
 \begin{tabular}{ l l }
- {\bf January 18}        &  Matrix operations in \texttt{R}        \\ \\
- {\bf January 25}        &  OLS regression from first principles   \\ \\
- {\bf February 2}        &  Goodness of fit                        \\ \\
- {\bf Februray 9}        &  Hypothesis testing                     \\ \\
- {\bf February 16}       &  Efficiency of GLS                      \\ \\
- {\bf February 23}       &  Instrumental variables                      
+ {\bf January 25}        &  Matrix operations in \texttt{R}          \vspace{4pt} \\ 
+ {\bf February 1}        &  OLS regression from first principles     \vspace{4pt} \\ 
+ {\bf February 8}        &  Goodness of fit                          \vspace{4pt} \\ 
+ {\bf Februray 15}       &  Hypothesis testing                       \vspace{4pt} \\ 
+ {\bf February 22}       &  Returns to education, empirical example  \vspace{4pt} \\ 
+ {\bf March 1}           &  Efficiency of GLS                        \vspace{4pt} \\ 
+ {\bf March 8}           &  Large sample properties of OLS           \vspace{4pt} \\ 
+ {\bf March 15}          &  Empirical example                        \vspace{4pt} \\ 
+ {\bf March 22}          &  Testing for Heteroskedasticity           \vspace{4pt} \\ 
+ {\bf March 29}          &  Feasible generalized least squares       \vspace{4pt} \\ 
+ {\bf April 5}           &  Serial correlation                       \vspace{4pt} \\ 
+ {\bf April 12}          &  Instrumental variables                   \vspace{4pt} \\ 
+ {\bf April 19}          &  Empirical example                        \vspace{4pt} \\ 
+ {\bf April 26}          &  Spatial analysis in \texttt{R}           \vspace{4pt} \\ 
+ {\bf May 3}             &  Web scraping in \texttt{R}               \vspace{4pt} 
 \end{tabular}
 \vspace{10pt}
 
@@ -75,19 +87,22 @@ The =R= code for each section is posted on the Github site, and should
 run on any machine and any operating system.  Please feel free to
 e-mail me with any questions.  \\
 
-*Office hours*: I don't really use my office on campus.  In fact, I'm
- not even sure where it is.  Please e-mail me with questions!  I'll
- respond promptly, over e-mail or in person.\\
+*Office hours*: I don't use my office on campus.  In fact, I'm not
+ even sure where it is. Instead, I'll be in 204 Giannini from 4:00pm -
+ 5:00pm on Tuesdays.  Please stop by!  If you can't make regular
+ office hours, please e-mail me with questions!  I'll respond
+ promptly, over e-mail or in person.\\
 
 *Homework*: Problem sets will be collected at the end of class on the
  specified date.  Ultimately, Max will decide the deductions for late
  homework.  I will not stray from his stated policies.\\
 
-*Grading*: The problem sets will be graded on a 100 point scale.
- Partial credit will be awarded for partial answers.  I will do my
- best to award partial credit fairly, compensating both effort and
- accuracy.  The problem set grades don't really matter too much,
- though, so I can't imagine anyone will take issue with the grades.\\
+*Grading*: The problem sets will be graded on a 100 point scale.  A
+ face-plant fail or no-show will be assigned a 0; a
+ tried-and-came-close will be assigned a 70; and a good-showing will
+ be assigned a 100.  I can't imagine anyone will take issue with the
+ problem set grades, since they don't matter too much toward the final
+ grade.  But see me if you have questions.\\
 
 *Attendance*: You are not required to come.  I hope the sections are
  helpful, but I carry no conception that the sections will be
