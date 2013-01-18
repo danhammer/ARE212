@@ -1,0 +1,34 @@
+#+AUTHOR:     
+#+TITLE:      
+#+OPTIONS:     toc:nil num:nil 
+#+LATEX_HEADER: \usepackage{mathrsfs}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
+#+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
+#+LATEX: \setlength{\parindent}{0in}
+#+STARTUP: fninline
+
+*Introduction and setup* \hfill
+*ARE212*: Preliminaries \\ \\
+
+The objective of this section is to review the syllabus and the =R=
+environment.  With remaining time, I will introduce the Github repository
+for these sections and 

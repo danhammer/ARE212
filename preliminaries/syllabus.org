@@ -52,7 +52,7 @@ final section notes will always be posted on Blackboard at least one
 week in advance of class. The development version of the notes and =R=
 code will be posted to my Github respository: \\
 
-\\ \\ \email{www.github.com/danhammer/ARE212} \\ 
+\\ \\ \email{github.com/danhammer/ARE212} \\ 
 
 Here, you will be able to see the evolution of the notes, as well as
 the structure and protocol associated with production code.  If you
@@ -65,21 +65,21 @@ credible threat, since =auffhammer= is an awesome Github handle.]
 
 \vspace{10pt}
 \begin{tabular}{ l l }
- {\bf January 25}        &  Matrix operations in \texttt{R}          \vspace{4pt} \\ 
- {\bf February 1}        &  OLS regression from first principles     \vspace{4pt} \\ 
- {\bf February 8}        &  Goodness of fit                          \vspace{4pt} \\ 
- {\bf Februray 15}       &  Hypothesis testing                       \vspace{4pt} \\ 
- {\bf February 22}       &  Returns to education, empirical example  \vspace{4pt} \\ 
- {\bf March 1}           &  Efficiency of GLS                        \vspace{4pt} \\ 
- {\bf March 8}           &  Large sample properties of OLS           \vspace{4pt} \\ 
- {\bf March 15}          &  Empirical example                        \vspace{4pt} \\ 
- {\bf March 22}          &  Testing for Heteroskedasticity           \vspace{4pt} \\ 
- {\bf March 29}          &  Feasible generalized least squares       \vspace{4pt} \\ 
- {\bf April 5}           &  Serial correlation                       \vspace{4pt} \\ 
- {\bf April 12}          &  Instrumental variables                   \vspace{4pt} \\ 
- {\bf April 19}          &  Empirical example                        \vspace{4pt} \\ 
- {\bf April 26}          &  Spatial analysis in \texttt{R}           \vspace{4pt} \\ 
- {\bf May 3}             &  Web scraping in \texttt{R}               \vspace{4pt} 
+ {\bf January 25}        &  Preliminaries and setup                  \vspace{4pt} \\ 
+ {\bf February 1}        &  Matrix operations in \texttt{R}          \vspace{4pt} \\ 
+ {\bf February 8}        &  OLS regression from first principles     \vspace{4pt} \\ 
+ {\bf February 15}       &  Goodness of fit                          \vspace{4pt} \\ 
+ {\bf Februray 22}       &  Hypothesis testing                       \vspace{4pt} \\ 
+ {\bf March 1}           &  Returns to education, empirical example  \vspace{4pt} \\ 
+ {\bf March 8}           &  Efficiency of GLS                        \vspace{4pt} \\ 
+ {\bf March 15}          &  Large sample properties of OLS           \vspace{4pt} \\ 
+ {\bf March 22}          &  Empirical example                        \vspace{4pt} \\ 
+ {\bf April 5}           &  Testing for Heteroskedasticity           \vspace{4pt} \\ 
+ {\bf April 12}          &  Feasible generalized least squares       \vspace{4pt} \\ 
+ {\bf April 19}          &  Serial correlation                       \vspace{4pt} \\ 
+ {\bf April 26}          &  Instrumental variables                   \vspace{4pt} \\ 
+ {\bf May 3}             &  Spatial analysis in \texttt{R}           \vspace{4pt} \\ 
+ {\bf May 10}            &  Web scraping in \texttt{R} (\textit{optional}) \vspace{4pt}
 \end{tabular}
 \vspace{10pt}
 
@@ -89,9 +89,9 @@ e-mail me with any questions.  \\
 
 *Office hours*: I don't use my office on campus.  In fact, I'm not
  even sure where it is. Instead, I'll be in 204 Giannini from 4:00pm -
- 5:00pm on Tuesdays.  Please stop by!  If you can't make regular
- office hours, please e-mail me with questions!  I'll respond
- promptly, over e-mail or in person.\\
+ 5:00pm on Tuesdays.  If you can't make regular office hours, please
+ e-mail me with questions!  I'll respond promptly, over e-mail or in
+ person.\\
 
 *Homework*: Problem sets will be collected at the end of class on the
  specified date.  Ultimately, Max will decide the deductions for late
