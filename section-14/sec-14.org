@@ -27,7 +27,7 @@
 #+STARTUP: fninline
 
 *Web Scraping in* \texttt{R} \hfill
-*ARE212*: Section 12 \\ \\
+*ARE212*: Section 14 \\ \\
 
 The purpose of this section is to showcase the ability to scrape and
 process web data using =R=.  This tutorial draws heavily from a [[http://schamberlain.github.com/2012/08/get-ecoevo-journal-titles/][post]]
@@ -57,7 +57,7 @@ structure.  There are too many entries to fit into a single query, so
 the =while= loop continues to query until there are no more results.
 The final results are stored in =nameslist=.
 
-#+begin_src R :results none :exports code :tangle yes
+#+begin_src R :results none :exports code :tangle yes :session
   token <- "characters"
   nameslist <- list()
   options(show.error.messages = FALSE)
