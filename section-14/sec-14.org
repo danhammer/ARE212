@@ -57,7 +57,7 @@ structure.  There are too many entries to fit into a single query, so
 the =while= loop continues to query until there are no more results.
 The final results are stored in =nameslist=.
 
-#+begin_src R :results none :exports code :tangle yes :session
+#+begin_src R :results none :exports code :tangle yes
   token <- "characters"
   nameslist <- list()
   options(show.error.messages = FALSE)
