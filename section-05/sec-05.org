@@ -40,8 +40,8 @@
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
-*Hypothesis Testing* \hfill
-*ARE212*: Section 04 \\ \\
+*Hypothesis testing* \hfill
+*ARE212*: Section 05 \\ \\
 
 This is an introducton to basic hypothesis testing in =R=. We have
 shown that, with a certain set of assumptions, the difference between
@@ -53,7 +53,7 @@ $s^2 = \ep\e/(n-k)$ is an unbiased estimator of $\sigs$ in Section
 rehash the lectures, but instead to use the results to practice
 indexing in =R=.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   data <- read.csv("../data/auto.csv", header=TRUE)
   names(data) <- c("price", "mpg", "weight")
   y <- matrix(data$price)
@@ -65,7 +65,7 @@ indexing in =R=.
 For reference, consider the regression output, using data we've seen
 before:
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
 res <- lm(price ~ 1 + mpg + weight, data=data)
 summary(res)
 #+end_src
@@ -98,7 +98,7 @@ the standard errors for each coefficient, noting the distribution in
 (2.63).  The variance of the error, $\sigs$, can be numerically
 estimated, as shown below:
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   n <- nrow(X); k <- ncol(X)
   P <- X %*% solve(t(X) %*% X) %*% t(X)
   e <- (diag(n) - P) %*% y
@@ -113,7 +113,7 @@ estimated, as shown below:
 The vector of standard errors matches those reported from =R='s
 canned routine =lm()=, which is encouraging.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   vcov.mat <- as.numeric(s2) * solve(t(X) %*% X)
   se <- sqrt(diag(vcov.mat))
   print(se)
@@ -125,7 +125,7 @@ canned routine =lm()=, which is encouraging.
 We can now use the vector of standard errors to perform the individual
 t-tests.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   b <- solve(t(X) %*% X) %*% t(X) %*% y
   apply(b / se, 1, function(t) {2*pt(-abs(t), df=n-k)})
 #+end_src
@@ -157,7 +157,7 @@ F = \frac{(\Rb\b - \r)^{\prime}[\Rb(\Xp\X)^{-1}\Rbp]^{-1}(\Rb\b - \r)/J}{s^2} =
     \frac{\bp(\Xp\X)\b/J}{s^2}
 \end{equation}
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   F <- t(b) %*% (t(X) %*% X) %*% b / (s2*3)
   print(F)
 #+end_src
@@ -171,7 +171,7 @@ Well shit.  This is much larger than the reported F-statistic of
 intercept, whereas =R= assumes that this shouldn't be included in
 the joint test.  Simplification failed.  Let's try again.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
   R <- rbind(c(0, 1, 0), c(0, 0, 1)); J <- 2
   select.var <- solve(R %*% solve(t(X) %*% X) %*% t(R))
   F <- t(R %*% b) %*% select.var %*% (R %*% b) / (s2 * J)

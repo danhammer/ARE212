@@ -42,7 +42,7 @@
 #+STARTUP: fninline
 
 \textbf{Generalized Least Squares and} \texttt{ggplot} \hfill
-*ARE212*: Section 05 \\ \\
+*ARE212*: Section 07 \\ \\
 
 This section will briefly walk through two general concepts, one
 econometric and one =R= oriented.  We will examine the characteristics

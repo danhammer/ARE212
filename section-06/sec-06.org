@@ -41,7 +41,7 @@
 #+STARTUP: fninline
 
 *Empirical example: return to education* \hfill
-*ARE212*: Section 04 \\ \\
+*ARE212*: Section 06 \\ \\
 
 The purpose of this section is to estimate the returns to education
 using =R=.  There is nothing valid about the results found in this
@@ -73,14 +73,14 @@ observations.
 A quick visualization reveals the distribution of wages in the data
 set:
 
-#+CAPTION: Loess regression
-#+LABEL: fig:loess 
-#+begin_src R :results output graphics :file fig1.png :width 800 :height 400 :session :tangle yes :exports both
+#+CAPTION: Wage histogram
+#+LABEL: fig:hist
+#+begin_src R :results output graphics :file inserts/fig1.png :width 800 :height 400 :session :tangle yes :exports both
   hist(data$wage, xlab = "wage", main = "", col = "grey", border = "white")
 #+end_src
 
 #+RESULTS:
-[[file:fig1.png]]
+[[file:inserts/fig1.png]]
 
 Roughly following page 38 of the lecture notes, we create a rough
 measure of educational attainment from the =educ= variable.  
@@ -99,29 +99,30 @@ The other coefficients reflect the relative wages of the other three
 classes.
 
 #+begin_src R :results output :exports both :tangle yes :session
-  (m1 <- lm(wage ~ 1 + e1 + e2 + e3 + e4, data = data))
+  coef(summary(m1 <- lm(wage ~ 1 + e1 + e2 + e3 + e4, data = data)))
 #+end_src
 
 #+RESULTS:
-: 
-: Call:
-: lm(formula = wage ~ 1 + e1 + e2 + e3 + e4, data = data)
-: 
-: Coefficients:
-: (Intercept)           e1           e2           e3           e4  
-:     1196.96      -350.46      -229.97       -90.51           NA
+:               Estimate Std. Error   t value      Pr(>|t|)
+: (Intercept) 1196.95876   38.93314 30.743953 7.969254e-144
+: e1          -350.46396   42.67867 -8.211689  7.239709e-16
+: e2          -229.97111   49.22796 -4.671555  3.429280e-06
+: e3           -90.50748   47.64240 -1.899726  5.777793e-02
 
 Suppose we want to estimate the premium on education, relative to the
-least educated class.  We then specifiy the regression:
+least educated class.  We can then specify the following regression
+and print the output directly to $\mbox{\LaTeX}$ using the =xtable=
+package[fn:: Note that this is a little superfluous, but it's worth
+examining the different ways to export tables.]:
 
-#+begin_src R :results output latex :exports both :tangle yes :session
+#+begin_src R :results output graphics latex :exports both :tangle yes :session
   xtable(m2 <- lm(wage ~ 1 + e2 + e3 + e4, data = data))
 #+end_src
 
 #+RESULTS:
 #+BEGIN_LaTeX
 % latex table generated in R 2.14.1 by xtable 1.7-0 package
-% Sun Jan 20 17:39:38 2013
+% Mon Jan 21 14:44:08 2013
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -138,4 +139,75 @@ least educated class.  We then specifiy the regression:
 \end{table}
 #+END_LaTeX
 
+None that the coefficients, now, indicate the premium over the base
+level of education for all subsequent levels.  Consider, for example,
+the premium on the =e4= class.  The average wage for people in this
+class, the class with the highest educational attainment levels, is
+found by:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  mean(data[e4 == 1, c("wage")])
+#+end_src
+
+#+RESULTS:
+: [1] 1196.959
+
+This is equivalent to adding the coefficient on =e4= to the intercept
+from the well-specified regression above.  Specifically:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  b <- m2$coefficients
+  b[["(Intercept)"]] + b[["e4"]] 
+#+end_src
+
+#+RESULTS:
+: [1] 1196.959
+
+This equality only holds because there are no other covariates in the
+regression.  If we condition on age, for example, then the simple
+addition does not yield an average wage.  For illustration, consider
+the previous regression with =age= and squared =age= as cofactors.  Note
+also the manner by which the =lm()= function accepts a nested function
+to specify squared =age= within the line:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  coef(summary(lm(wage ~ 1 + e2 + e3 + e4 + age + I(age^2), data = data)))
+#+end_src
+
+#+RESULTS:
+:                 Estimate  Std. Error     t value     Pr(>|t|)
+: (Intercept) -148.0041478 1660.163718 -0.08915033 9.289817e-01
+: e2           142.0919504   34.603321  4.10630965 4.374401e-05
+: e3           276.4462130   32.327306  8.55147690 4.954754e-17
+: e4           329.3717601   42.427654  7.76313861 2.181854e-14
+: age           38.4978013  100.467589  0.38318628 7.016693e-01
+: I(age^2)      -0.2572671    1.508597 -0.17053405 8.646273e-01
+
+It looks like age has a positive but diminishing effect on wage.  This
+makes sense, maybe, but the coefficients are not significantly
+different from zero.  Why might this be the case?  This is where some
+non-parametric graphing comes in handy. 
+
+#+CAPTION: Smoothed line
+#+LABEL: fig:line
+#+begin_src R :results output graphics :file inserts/fig2.png :width 800 :height 400 :session :tangle yes :exports both
+(g <- ggplot(data, aes(x=age, y=wage)) + geom_smooth(method="loess", size=1.5))
+#+end_src
+
+#+RESULTS:
+[[file:inserts/fig2.png]]
+
+We use the =ggplot2= package instead of the base =R= plotting
+facilities.  The plots reveal a reasonable relationship between wage
+and age, but there is a significant amount of variation in wage,
+relative to the short time frame of age.
+
+#+CAPTION: Smoothed line with points
+#+LABEL: fig:pts
+#+begin_src R :results output graphics :file inserts/fig3.png :width 800 :height 400 :session :tangle yes :exports both
+g + geom_point()
+#+end_src
+
+#+RESULTS:
+[[file:inserts/fig3.png]]
 
