@@ -9,19 +9,17 @@
 #+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
-#+LATEX: \newcommand{\Rb}{{\bf R}}
-#+LATEX: \newcommand{\Rbp}{{\bf R}^{\prime}}
 #+LATEX: \newcommand{\Rsq}{R^{2}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\b}{{\bf b}}
-#+LATEX: \renewcommand{\r}{{\bf r}}
 #+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
 #+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
 #+LATEX: \renewcommand{\X}{{\bf X}}
 #+LATEX: \renewcommand{\M}{{\bf M}}
 #+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
 #+LATEX: \renewcommand{\B}{{\bf B}}
 #+LATEX: \renewcommand{\C}{{\bf C}}
 #+LATEX: \renewcommand{\P}{{\bf P}}
@@ -36,150 +34,142 @@
 #+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
-#+LATEX: \renewcommand{\sigs}{\sigma^{2}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
-*Hypothesis Testing* \hfill
+*Goodness of Fit* \hfill
 *ARE212*: Section 04 \\ \\
 
-This is an introducton to basic hypothesis testing in =R=. We have
-shown that, with a certain set of assumptions, the difference between
-the OLS estimator and the true parameter vector is distributed
-normally as shown in expression (2.63): $$(\b - \beta)|\X \sim N({\bf
-0}, \hspace{4pt} \sigs \cdot (\Xp\X)^{-1})$$ We have also shown that
-$s^2 = \ep\e/(n-k)$ is an unbiased estimator of $\sigs$ in Section
-2.3.4 of the lecture notes. The purpose of the section is not to
-rehash the lectures, but instead to use the results to practice
-indexing in =R=.
+The idea behind this section is to study the behavior of the centered
+and uncentered $\Rsq$ as cofactors are incrementally included in the
+regression.  First, we must create a random matrix, where each
+variable is drawn from a standard uniform distribution.  All elements
+are independent and identically distributed, so we can create a very
+long, random vector and reshape it into a rectangular matrix.  For
+convenience and practice writing functions in =R=, we show a general
+function that accepts the dimensions ($n$ rows and $k$ columns) of the
+matrix.  The function generates a long vector of length $n \cdot k$
+and then reshapes it into an $n \times k$ matrix.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  random.mat <- function(n, k) {
+    v <- runif(n*k)
+    matrix(v, nrow=n, ncol=k)
+  }
+#+end_src
+
+The function bound to =random.mat()= behaves as we would expect:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  random.mat(3,2)
+#+end_src
+
+#+RESULTS:
+:            [,1]      [,2]
+: [1,] 0.54596729 0.1595011
+: [2,] 0.09682105 0.8549968
+: [3,] 0.92691069 0.5953242
+
+Another useful function for this section will be to create a square
+demeaning matrix $\A$ of dimension $n$.  The following function just
+wraps a few algebraic maneuvers, so that subsequent code is easier to
+read.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  demean.mat <- function(n) {
+    ones <- rep(1, n)
+    diag(n) - (1/n) * ones %*% t(ones)
+  }
+#+end_src
+
+As is described in the notes, pre-multiplying a matrix $\B$ by $\A$
+will result in a matrix $\C = \A\B$ of deviations from the column
+means of $\B$. Check that this is true.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  A <- demean.mat(3)
+  B <- matrix(1:9, nrow=3)
+  col.means <- apply(B, 2, mean)
+  C <- apply(B, 1, function(x) {x - col.means})
+  all.equal(A %*% B, t(C))
+#+end_src
+
+#+RESULTS:
+: [1] TRUE
+
+Alright, we're ready to apply the functions to real data in order to
+calculate the centered $\Rsq$. First, read in the data to conform to
+equation (2.37) on page 14 of the lecture notes, and identify the
+number of observations $n$ for later use:
+#+begin_src R :results output graphics :exports both :tangle yes :session
   data <- read.csv("../data/auto.csv", header=TRUE)
   names(data) <- c("price", "mpg", "weight")
   y <- matrix(data$price)
-  X <- cbind(1, data$mpg, data$weight)
+  X2 <- cbind(data$mpg, data$weight)
+  n <- nrow(X2)
 #+end_src
 
 #+RESULTS:
 
-For reference, consider the regression output, using data we've seen
-before:
-
-#+begin_src r :results output graphics :exports both :tangle yes :session
-res <- lm(price ~ 1 + mpg + weight, data=data)
-summary(res)
-#+end_src
-
-#+results:
-#+begin_example
-
-Call:
-lm(formula = price ~ 1 + mpg + weight, data = data)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
- -3332  -1858   -504   1256   7507 
-
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)   
-(Intercept) 1946.0687  3597.0496   0.541  0.59019   
-mpg          -49.5122    86.1560  -0.575  0.56732   
-weight         1.7466     0.6414   2.723  0.00813 **
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
-
-Residual standard error: 2514 on 71 degrees of freedom
-Multiple R-squared: 0.2934,	Adjusted R-squared: 0.2735 
-F-statistic: 14.74 on 2 and 71 DF,  p-value: 4.425e-06
-#+end_example
-
-In order to perform individual t-tests, we will first have to identify
-the standard errors for each coefficient, noting the distribution in
-(2.63).  The variance of the error, $\sigs$, can be numerically
-estimated, as shown below:
-
-#+begin_src r :results output graphics :exports both :tangle yes :session
-  n <- nrow(X); k <- ncol(X)
-  P <- X %*% solve(t(X) %*% X) %*% t(X)
-  e <- (diag(n) - P) %*% y
-  s2 <- t(e) %*% e / (n - k)
-  print(s2)
-#+end_src
-
-#+RESULTS:
-:         [,1]
-: [1,] 6320340
-
-The vector of standard errors matches those reported from =R='s
-canned routine =lm()=, which is encouraging.
-
-#+begin_src r :results output graphics :exports both :tangle yes :session
-  vcov.mat <- as.numeric(s2) * solve(t(X) %*% X)
-  se <- sqrt(diag(vcov.mat))
-  print(se)
-#+end_src
-
-#+RESULTS:
-: [1] 3597.0495988   86.1560389    0.6413538
-
-We can now use the vector of standard errors to perform the individual
-t-tests.
-
-#+begin_src r :results output graphics :exports both :tangle yes :session
-  b <- solve(t(X) %*% X) %*% t(X) %*% y
-  apply(b / se, 1, function(t) {2*pt(-abs(t), df=n-k)})
-#+end_src
-
-#+RESULTS:
-: [1] 0.590188628 0.567323727 0.008129813
-
-Great!  We have replicated the =Pr(>|t|)= column of the canned output.
-Now let's try to replicate the full regression F-statistic.  This is a
-joint test of coefficient significance; are the coefficients jointly
-different from a zero vector?  Max has a great description as to why
-this is different from three separate tests of significance.  For now,
-note that we are testing joint significance by setting
+The centered $\Rsq$ is defined according to equation (2.41) as
+follows:
 \begin{equation}
-\label{eq:fmats}
-\Rb = \left[ \begin{array}{ccc} 1 & 0 & 0 \\
-                                0 & 1 & 0 \\
-                                0 & 0 & 1 \\ \end{array} \right]
-\hspace{10pt} \mbox{and} \hspace{10pt}
-\r = \left[ \begin{array}{c} 0 \\ 0 \\ 0 \\ \end{array} \right]
-\end{equation} 
-
-This is great.  This simplifies the hell out of equation (2.81), which
-is fairly daunting at first:
-
-\begin{equation}
-\label{eq:F}
-F = \frac{(\Rb\b - \r)^{\prime}[\Rb(\Xp\X)^{-1}\Rbp]^{-1}(\Rb\b - \r)/J}{s^2} = 
-    \frac{\bp(\Xp\X)\b/J}{s^2}
-\end{equation}
-
-#+begin_src r :results output graphics :exports both :tangle yes :session
-  F <- t(b) %*% (t(X) %*% X) %*% b / (s2*3)
-  print(F)
+\label{eq:rsq}
+\Rsq = \frac{\bp_{2}\Xsp_{2}\Xs_{2}\b_{2}}{\ysp\ys},
+\end{equation} where $\ys = \A\y$, $\Xs_2$ = \A\X_2$, and $\b_2 =
+(\Xsp_{2}\Xs_{2})^{-1}\Xsp_{2}\ys$.  Noting that $\A$ is both
+symmetric and idempotent, we can rewrite Eq. (\ref{eq:rsq}) in terms
+of matrices already defined, thereby simplifying the subsequent code
+dramatically.  From my limited experience with programming, the best
+code is that which reflects the core idea of the procedure; more time
+spent with a pen and paper and not in =R= will almost always yield
+more readable code, and more readable code yields fewer errors and
+suggests quick extensions.  That said, note that $\Xsp_{2}\Xs_{2} =
+\Xp_2\Ap\A\X_2 = \Xp_2\A\A\X_2 = \Xp_2\A\X_2$ and similarly that
+$\ysp\ys = \yp\A\y$ and $\Xsp_{2}\ys = \Xp_{2}\A\y$. If we write a
+more general function, though, we can apply it to an arbitrary
+dependent vector and associated cofactor matrix:
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  R.squared <- function(y, X) {
+    n <- nrow(X)
+    A <- demean.mat(n)
+    xtax <- t(X) %*% A %*% X
+    ytay <- t(y) %*% A %*% y
+    b2 <- solve(xtax) %*% t(X) %*% A %*% y
+    t(b2) %*% xtax %*% b2 / ytay
+  }
+  
+  R.squared(y, X2)
 #+end_src
 
 #+RESULTS:
-:          [,1]
-: [1,] 158.1714
+:           [,1]
+: [1,] 0.2933891
 
-Well shit.  This is much larger than the reported F-statistic of
-14.74.  What happened?  The problem is that we also included the
-intercept, whereas =R= assumes that this shouldn't be included in
-the joint test.  Simplification failed.  Let's try again.
+Without some penalty for addtional cofactors, the $\Rsq$ will
+monotonically increase with the number of columns in the cofactor
+matrix $\X$.  This function is plotted in Figure (\ref{fig:r}), mostly
+as an introduction to very simple plots in =R=.
 
-#+begin_src r :results output graphics :exports both :tangle yes :session
-  R <- rbind(c(0, 1, 0), c(0, 0, 1)); J <- 2
-  select.var <- solve(R %*% solve(t(X) %*% X) %*% t(R))
-  F <- t(R %*% b) %*% select.var %*% (R %*% b) / (s2 * J)
-  print(c(F, pf(F, 2, 71, lower.tail=FALSE)))
+#+ATTR_LaTeX: width=0.5\textwidth
+#+CAPTION:    $\Rsq$ rises monotonically as a function of columns
+#+LABEL:    fig:r
+#+begin_src R :results output graphics :file inserts/graph1.png :width 800 :height 800 :session :tangle yes :exports both
+  n <- nrow(X2)
+  X.rnd <- random.mat(n, 70)
+  res <- rep(0, 70)
+  for(i in 1:70) {
+    X.ext <- cbind(X2, X.rnd[, 1:i])
+    res[i] <- R.squared(y, X.ext)
+  }
+  plot(res)
 #+end_src
 
 #+RESULTS:
-: [1] 1.473982e+01 4.424878e-06
+[[file:inserts/graph1.png]]
 
-It worked!  And the probability of observing the F-statistic with
-degrees of freedom $J=2$ and $n-k = 71$ is printed as well.  
+It may be difficult to get a sense of the shape of the curve based on
+a single draw for the random matrix.  We can calculate the
+relationship between $\Rsq$ and the number of cofactors --- or we can
+bootstrap an estimate for each index, which we will do in a subsequent
+section to illustrate bootstrapping in =R=.

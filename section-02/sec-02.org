@@ -12,236 +12,228 @@
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
-#+LATEX: \renewcommand{\X}{{\bf X}}
-#+LATEX: \renewcommand{\M}{{\bf M}}
-#+LATEX: \renewcommand{\P}{{\bf P}}
-#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
-#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
-#+LATEX: \renewcommand{\y}{{\bf y}}
-#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
-#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
-#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
-#+LATEX: \newcommand{\code}[1]{\texttt{#1}}
+#+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
+#+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
-*Ordinary Least Squares* \hfill
+\textbf{Matrix operations in \texttt{R}} \hfill
 *ARE212*: Section 02 \\ \\
 
-This section is intended to introduce linear regression in \R.  The
-first step is to read the data set =auto.csv= from the relative path.
-You can also download it from [[https://github.com/danhammer/ARE212/blob/master/data/auto.csv][here]].  We set the option =header= to
-=TRUE=, which treats the first line of the CSV file as variable names,
-rather than an observation.
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  data <- read.csv("../data/auto.csv", header=TRUE)
-#+end_src
+This first section is meant to give a brief introduction to data
+manipulation in =R= that will support the work in future sections.  It
+may not be exciting, but it's incredibly exciting.
+
+* Creating matrices
+
+There are a variety of data objects in =R=, including numbers, vectors,
+matrices, strings, and dataframes.  We will mainly be working with
+vectors and matrices, which are quick to create and manipulate in =R=.
+The =matrix= function will create a matrix, according to the
+supplied arguments.
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+matrix(1:6, ncol=2)
+#+END_SRC
+
+#+results:
+:      [,1] [,2]
+: [1,]    1    4
+: [2,]    2    5
+: [3,]    3    6
+
+The =ncol= option specifies the number of columns for the output
+matrix; and the default behavior of =matrix= is to cycle through by
+column.  To cycle through by rows, you'll have to set the optional
+argument =byrow=TRUE=.
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+matrix(1:6, ncol=3, byrow=TRUE)
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2] [,3]
+: [1,]    1    2    3
+: [2,]    4    5    6
+
+Suppose we wanted to check to see if the first matrix was equal to the
+transpose of the second.  This is clearly the case --- we can see that
+it is.  But in code, it would be cumbersome to check this condition
+using the previous two commands.  Instead, we can assign the matrices
+to variables for use in subsequent manipulations.  The =<-= operator
+assigns the arbitrary object to the supplied variable:
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+A <- matrix(1:6, ncol=2)
+B <- matrix(1:6, ncol=3, byrow=TRUE)
+#+END_SRC
 
 #+RESULTS:
 
-We can read the names from the data set; but they aren't much help.
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  names(data)
-#+end_src
+The \texttt{=} operator also assigns values, with a slightly different
+behavior; and it is common practice to use the \texttt{=} assignment
+for function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for a
+description of other standard practices in =R=.]  The \texttt{==}
+comparison operator will yield \texttt{TRUE} or \texttt{FALSE}:
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+A == t(B)
+#+END_SRC
 
 #+RESULTS:
-: [1] "V1" "V2" "V3"
+:      [,1] [,2]
+: [1,] TRUE TRUE
+: [2,] TRUE TRUE
+: [3,] TRUE TRUE
 
-We can replace the column headers with more descriptive variable
-names.  The next command is an example of destructuring.  There are
-three elements in both the original and new list; and each element in
-the original list is reassigned based on its position in the list,
-e.g., the =V1= header is replaced by =price=.
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  names(data) <- c("price", "mpg", "weight")
-#+end_src
+Note that =t()= will return the tranpose of the supplied matrix.  Each
+element is checked individually, and each is identical in matrix $\A$
+and $\Bp$.  To check the truthiness of the statement that all elements
+are identical, we need only to employ the =all= function:
 
-#+RESULTS:
-
-To get a sense of the data, list the first six observations:
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  head(data)
-#+end_src
-
-#+RESULTS:
-:   price mpg weight
-: 1  4099  22   2930
-: 2  4749  17   3350
-: 3  3799  22   2640
-: 4  4816  20   3250
-: 5  7827  15   4080
-: 6  5788  18   3670
-
-With the columns appropriately names, we can refer to particular
-variables within the data set using the unique indexing in =R=, where
-data objects tend to be variants of lists and nested lists.
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  head(data$mpg)
-#+end_src
-
-#+RESULTS:
-: [1] 22 17 22 20 15 18
-
-Now for the analysis, a linear model using =lm()=.  We specify
-the model by referring to the column headers within the specified data
-set --- along with a 1 to indicate a column of ones. =R= is unique for
-intelligently snapping the dimensions of comparable matrices.
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  lm(price ~ 1 + mpg + weight, data=data)
-#+end_src
-
-#+RESULTS:
-: 
-: Call:
-: lm(formula = price ~ 1 + mpg + weight, data = data)
-: 
-: Coefficients:
-: (Intercept)          mpg       weight  
-:    1946.069      -49.512        1.747
-
-Note that we do not need to refer to the data set in calling a
-vector, e.g., =data$price=.  Instead, we "attach" the data
-within the linear model.  We can do the same thing for the =R=
-session, which tends to simplify notation.  The columns can be
-referenced directly after the data set has been attached.
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  attach(data)
-  head(mpg)
-#+end_src
-
-#+RESULTS:
-: [1] 22 17 22 20 15 18
-
-The use of /canned/ routines is not permitted for most of this
-class; you'll have to write the econometric routines from first
-principles.  First, create matrices of the data, since we will be
-working mainly with matrix operations.  Let $\y$ be the dependent
-variable, price, and let $\X$ be a matrix of the other car
-characteristics, along with a column of ones prepended.  The
-=cbind()= function binds the columns horizontally and coerces the
-=matrix= class.
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  y <- matrix(price)
-  X <- cbind(1, mpg, weight)
-#+end_src
-
-#+RESULTS:
-
-Check that the number of observations are the same in both the
-dependent vector $\y$ and the cofactor matrix $\X$.
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-dim(X)[1] == nrow(y)
-#+end_src
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+all(A == t(B))
+#+END_SRC
 
 #+RESULTS:
 : [1] TRUE
 
-Before preceding, we should =detach= the data frame, so that if we
-reload the =R= script, there won't be any naming conflicts.  The =X=
-and =y= objects will persist, as will =data$mpg=, but we will no
-longer be able to call the variables without referencing the data
-frame.
+We can get a list of all the object currently available in memory with
+the =ls()= function, which is useful as the assignments begin to
+accumulate:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
-  detach(data)
-#+end_src
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+ls()
+#+END_SRC
 
-#+RESULTS:
+Note that without assignment, the transpose of $\B$, or =t(B)=, is
+created on the fly, remaining anonymous.
 
-Using the matrix operations described in the previous section, we can
-quickly estimate the ordinary least squared parameter vector.
+* Matrix operations
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
-beta <- solve(t(X) %*% X) %*% t(X) %*% y
-print(beta)
-#+end_src
+Matrix muliplication in =R= is bound to =%*%=, whereas scalar
+multiplication is bound to =*=.  Consider the product $\B\A$:
 
-#+RESULTS:
-:               [,1]
-:        1946.068668
-: mpg     -49.512221
-: weight    1.746559
-
-This vector matches the coefficient vector from the canned routine,
-thankfully.  Digging deeper into the numbers, consider the projection
-matrix $\P = \X(\Xp\X)^{-1}\Xp$ and the residual maker matrix $\M =
-\In - \P$
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-n <- nrow(y)
-P <- X %*% solve(t(X) %*% X) %*% t(X)
-M <- diag(n) - P
-#+end_src
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+B %*% A
+#+END_SRC
 
 #+RESULTS:
+:      [,1] [,2]
+: [1,]   14   32
+: [2,]   32   77
 
-=R= is useful for checking the properties of these matrices, including
-whether $\M$ is symmetric, that is, whether $\M = \Mp$.  The function
-=all.equal()= does not test *exact* equality, but instead whether
-the supplied objects are "close enough" to be considered the same.
-The problem is the limits of machine precision, and rounding at the
-tail ends of floating point numbers.
+The dimensions have to line up properly for matrix multiplication to
+be appropriately applied, otherwise =R= returns an error, as is the
+case with the product $\B\Ap$:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
-all.equal(M, t(M))
-#+end_src
-
-#+RESULTS:
-: [1] TRUE
-
-If we want to test for exact equality, we set the tolerance to
-zero, and the function will return a message with the mean relative
-difference between elements --- which is clearly very close to zero.
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-all.equal(M, t(M), tol=0)
-#+end_src
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+B %*% t(A)
+#+END_SRC
 
 #+RESULTS:
-: [1] "Mean relative difference: 7.266263e-15"
+: Error in B %*% t(A) : non-conformable arguments
 
-The residual maker matrix should also be idempotent, or $\M =
-\M\Mp$.
+If scalar multiplication is applied to matrices of exactly the same
+dimensions, then the result is element-wise multiplication.  This type
+of operation is sometimes called the Hadamard product, denoted $\B
+\circ \Ap$:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
-all.equal(M, M %*% t(M))
-#+end_src
-
-#+RESULTS:
-: [1] TRUE
-
-Finally, we can examine the different components of the variation
-in the dependent variable, as they relate to the OLS estimate.
-Specifically, we can show that the total sum of square is equal to the
-sum of the residual and estimated sum of squares: 
-\begin{equation}
-\label{eq:ss}
-\yp\y = \yhp\yh + \ep\e
-\end{equation}
-First, define the relevant variables:
-
-#+begin_src R :results output graphics :exports both :tangle yes :session
-e <- M %*% y
-y.hat <- P %*% y
-rss <- t(e) %*% e
-ess <- t(y.hat) %*% y.hat
-tss <- t(y) %*% y
-#+end_src
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+B * t(A)
+#+END_SRC
 
 #+RESULTS:
+:      [,1] [,2] [,3]
+: [1,]    1    4    9
+: [2,]   16   25   36
 
-Then check the condition in Eq. (\ref{eq:ss}):
+More common, if we want to scale all elements by a factor of two, say,
+we just multiply a matrix by a scalar; but note that =class(2)= must
+be not be =matrix= but rather =numeric= so as to avoid a
+non-conformable error:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
-all.equal(tss, ess + rss)
-#+end_src
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+A * 2
+#+END_SRC
 
 #+RESULTS:
-: [1] TRUE
+:      [,1] [,2]
+: [1,]    2    8
+: [2,]    4   10
+: [3,]    6   12
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+A * matrix(2)
+#+END_SRC
+
+#+RESULTS:
+: Error in A * matrix(2) : non-conformable arrays
+
+Consider a more complicated operation, whereby each column of a matrix
+is multiplied element-wise by another, fixed column.  We encounter
+this situation frequently in time series analysis to test for
+parameter instability.  Here, each column of a particular matrix is
+multiplied in-place by a fixed column of residuals.  Let $\e$ be a
+vector defined as an increasing sequence of length three:
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+e <- 1:3
+#+END_SRC
+
+Note first that the default sequence in =R= is a column vector, and
+not a row vector.  We would like to =apply= a function to each
+column of $\A$, specifically a function that multiplies each column
+in-place by $\e$.  We must supply a 2 to ensure that the function is
+applied to the second dimension (columns) of $\A$:
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+apply(A, 2, function(x) {x * e})
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]    1    4
+: [2,]    4   10
+: [3,]    9   18
+
+The function that is applied is anonymous, but it could also be
+bound to a variable -- just as a matrix is bound to a variable:
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+whoop <- function(x) {x * e}
+apply(A, 2, whoop)
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]    1    4
+: [2,]    4   10
+: [3,]    9   18
+
+We will often need to define an identity matrix of dimension $n$, or
+$\In$.  This is quick using =diag=:
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+I <- diag(5)
+#+END_SRC
+
+There are many ways to calculate the trace of $\I_5$.  One method has
+been bundled into a function, called =tr()=, that is included in a
+packaged called =psych= which is not included in the base distribution
+of =R=.  We will need to grab and call the library to have access to
+the function, installing it with the command
+=install.packages("psych")=.  For this, you'll need an internet
+connection.
+
+#+BEGIN_SRC r :results output :exports both :session :tangle yes
+library(psych)
+tr(I)
+#+END_SRC
+
+#+RESULTS:
+: [1] 5
 

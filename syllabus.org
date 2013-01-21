@@ -4,9 +4,10 @@
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
 #+LATEX_HEADER: \usepackage{booktabs}
-#+LATEX_HEADER: \usepackage{dcolumn}
-#+LATEX_HEADER: \usepackage{subfigure}
 #+LATEX_HEADER: \usepackage{coffee}
+#+LATEX_HEADER: \usepackage{dcolumn}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{subfigure}
 #+LATEX_HEADER: \usepackage[margin=1in]{geometry}
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
@@ -29,69 +30,70 @@
 \begin{tabular}{ l l }
  {\bf Office hours}          &  Tuesdays, 4:00PM-5:00PM         \\
  {\bf OH location}           &  204 GIANNINI                    \\
- {\bf e-mail}                &  \email{danhammer@berkeley.edu}  \\
- {\bf twitter}               &  \email{@econohammer}            \\
+ {\bf e-mail}                &  \href{mailto:danhammer@berkeley.edu} {\email{danhammer@berkeley.edu}}  \\
+ {\bf twitter}               &  \href{www.twitter.com/econohammer}{\email{@econohammer}}            \\
 \end{tabular}
 \vspace{10pt}
 \hline
 
 \bigskip 
 
+\coffee{1}
+
 The purpose of this document is to outline the sections for Max
 Auffhammer's econometrics course, the first semester of the ARE
-econometrics sequence.  The purpose of the sections is to introduce
-=R= for econometrics, illustrating the theory presented in class with
-applied examples.  Actual data work.  \\
+econometrics sequence.  The objective of the sections is to introduce
+=R= for econometrics, illustrating the lecture notes with applied,
+coded examples. Actual data work.  \\
 
-This is my first attempt as a graduate student instructor, so be
-gentle.  I tell you this to warn you that the section notes might
-change throughout the course, not to reveal my weaknesses --- of which
-I have none.  The outline of sections below is based on the
-progression from previous years.  The outline might change, but the
-final section notes will always be posted on Blackboard at least one
-week in advance of class. The development version of the notes and =R=
-code will be posted to my Github respository: \\
+The outline of sections below is based on the progression from
+previous years.  The outline might change, but the final section notes
+will always be posted on bSpace at least one week in advance of
+section. The development version of the notes and =R= code will be
+posted to my Github respository: \\
 
-\\ \\ \email{github.com/danhammer/ARE212} \\ 
+\\ \\ [[www.github.com/danhammer/ARE212][\email{github.com/danhammer/ARE212}]] \\
 
-Here, you will be able to see the evolution of the notes, as well as
-the structure and protocol associated with production code.  If you
-want to collaborate on the notes, join Github and send me an e-mail.
-I will help get you started, if needed.[fn:: A side note: I have
-reserved the handle =auffhammer=, just in case Max ever wants to join.
-I will try dearly to extract the rents associated with absolute
-scarcity.  He claims he'll just get another handle; but this is not a
-credible threat, since =auffhammer= is an awesome Github handle.]
+You do not need to know anything about Github to productively and
+successfully engage in section.  But you will be able to see the
+evolution of the notes, as well as the structure and protocol
+associated with production code.  If you want to collaborate on the
+notes, join Github and send me an e-mail.  I will help get you
+started, if needed.[fn:: A side note: I have reserved the handle
+=auffhammer=, just in case Max ever wants to join.  I will try dearly
+to extract the rents associated with absolute scarcity.  He claims
+he'll just get another handle; but this is not a credible threat,
+since =auffhammer= is an awesome Github handle.]
 
 \vspace{10pt}
 \begin{tabular}{ l l }
- {\bf January 25}        &  Preliminaries and setup                  \vspace{4pt} \\ 
- {\bf February 1}        &  Matrix operations in \texttt{R}          \vspace{4pt} \\ 
- {\bf February 8}        &  OLS regression from first principles     \vspace{4pt} \\ 
- {\bf February 15}       &  Goodness of fit                          \vspace{4pt} \\ 
- {\bf Februray 22}       &  Hypothesis testing                       \vspace{4pt} \\ 
- {\bf March 1}           &  Returns to education, empirical example  \vspace{4pt} \\ 
- {\bf March 8}           &  Efficiency of GLS                        \vspace{4pt} \\ 
- {\bf March 15}          &  Large sample properties of OLS           \vspace{4pt} \\ 
- {\bf March 22}          &  Empirical example                        \vspace{4pt} \\ 
- {\bf April 5}           &  Testing for Heteroskedasticity           \vspace{4pt} \\ 
+ {\bf February 1}        &  Preliminaries and setup                  \vspace{4pt} \\ 
+ {\bf February 8}        &  Matrix operations in \texttt{R}          \vspace{4pt} \\ 
+ {\bf February 15}       &  OLS regression from first principles     \vspace{4pt} \\ 
+ {\bf Februray 22}       &  Goodness of fit                          \vspace{4pt} \\ 
+ {\bf March 1}           &  Hypothesis testing                       \vspace{4pt} \\ 
+ {\bf March 8}           &  Returns to education, empirical example  \vspace{4pt} \\ 
+ {\bf March 15}          &  Efficiency of GLS                        \vspace{4pt} \\ 
+ {\bf March 22}          &  Large sample properties of OLS           \vspace{4pt} \\ 
+ {\bf April 5}           &  Testing for heteroskedasticity           \vspace{4pt} \\ 
  {\bf April 12}          &  Feasible generalized least squares       \vspace{4pt} \\ 
  {\bf April 19}          &  Serial correlation                       \vspace{4pt} \\ 
  {\bf April 26}          &  Instrumental variables                   \vspace{4pt} \\ 
- {\bf May 3}             &  Spatial analysis in \texttt{R}           \vspace{4pt} \\ 
- {\bf May 10}            &  Web scraping in \texttt{R} (\textit{optional}) \vspace{4pt}
+ {\bf May 3}             &  Spatial analysis in \texttt{R}           
 \end{tabular}
 \vspace{10pt}
 
-The =R= code for each section is posted on the Github site, and should
-run on any machine and any operating system.  Please feel free to
-e-mail me with any questions.  \\
+The =R= code for each section will be posted on both bSpace and
+Github, and should run on any machine and any operating system.
+Please feel free to e-mail me with any questions.  \\
 
 *Office hours*: I don't use my office on campus.  In fact, I'm not
  even sure where it is. Instead, I'll be in 204 Giannini from 4:00pm -
  5:00pm on Tuesdays.  If you can't make regular office hours, please
  e-mail me with questions!  I'll respond promptly, over e-mail or in
- person.\\
+ person within 48 hours.  If I can't answer in less than a paragraph,
+ I'll ask you to come to office hours.  I will not hold office hours
+ on Tuesday, March 19 as I will be at an out-of-town conference.\\
 
 *Homework*: Problem sets will be collected at the end of class on the
  specified date.  Ultimately, Max will decide the deductions for late
@@ -100,9 +102,7 @@ e-mail me with any questions.  \\
 *Grading*: The problem sets will be graded on a 100 point scale.  A
  face-plant fail or no-show will be assigned a 0; a
  tried-and-came-close will be assigned a 70; and a good-showing will
- be assigned a 100.  I can't imagine anyone will take issue with the
- problem set grades, since they don't matter too much toward the final
- grade.  But see me if you have questions.\\
+ be assigned a 100.  \\
 
 *Attendance*: You are not required to come.  I hope the sections are
  helpful, but I carry no conception that the sections will be
@@ -115,11 +115,14 @@ e-mail me with any questions.  \\
  both at once.  I have listed a few helpful resources for both writing
  code and scripting econometric routines.  
 
-1. *Econometrics in R*, \email{cran.r-project.org/doc/contrib/Farnsworth-EconometricsInR.pdf}
+1. *Econometrics in R*,
+   \email{cran.r-project.org/doc/contrib/Farnsworth-EconometricsInR.pdf}
 
-2. *R Style Guide*, \email{google-styleguide.googlecode.com/svn/trunk/google-r-style.html}
+2. *R Style Guide*,
+   \email{google-styleguide.googlecode.com/svn/trunk/google-r-style.html}
 
-3. *Econometrics*, /Bruce Hansen/, \email{www.ssc.wisc.edu/\char`\~ bhansen/econometrics/Econometrics.pdf}
+3. *Econometrics*, /Bruce Hansen/, \email{www.ssc.wisc.edu/\char`\~
+   bhansen/econometrics/Econometrics.pdf}
 
 *Academic integrity*: /This is cribbed directly from the UC Berkeley
  site/: These are some basic expectations of students with regards to

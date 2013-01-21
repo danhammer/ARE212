@@ -1,0 +1,141 @@
+#+AUTHOR:     
+#+TITLE:      
+#+OPTIONS:     toc:nil num:nil 
+#+LATEX_HEADER: \usepackage{mathrsfs}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{dcolumn}
+#+LATEX_HEADER: \usepackage{subfigure}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
+#+LATEX: \newcommand{\Rb}{{\bf R}}
+#+LATEX: \newcommand{\Rbp}{{\bf R}^{\prime}}
+#+LATEX: \newcommand{\Rsq}{R^{2}}
+#+LATEX: \newcommand{\ep}{{\bf e}^\prime}
+#+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\b}{{\bf b}}
+#+LATEX: \renewcommand{\r}{{\bf r}}
+#+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
+#+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
+#+LATEX: \renewcommand{\I}{{\bf I}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\A}{{\bf A}}
+#+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\C}{{\bf C}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Xsp}{{\bf X}^{*\prime}}
+#+LATEX: \renewcommand{\Xs}{{\bf X}^{*}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\ys}{{\bf y}^{*}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\ysp}{{\bf y}^{*\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \renewcommand{\sigs}{\sigma^{2}}
+#+LATEX: \setlength{\parindent}{0in}
+#+STARTUP: fninline
+
+*Empirical example: return to education* \hfill
+*ARE212*: Section 04 \\ \\
+
+The purpose of this section is to estimate the returns to education
+using =R=.  There is nothing valid about the results found in this
+section; but the empirical application gives us a chance to explore
+categorical dummies and the =ggplot= package.  First, as always, we
+load the required libraries.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  library(foreign)
+  library(ggplot2)
+  library(xtable)
+#+end_src
+
+#+RESULTS:
+
+We can then read the wage data directly from the online repository for
+the supplementary data sets for the Wooldridge (2002) text.  You will
+need an internet connection. We only need the =wage=, =educ=, and
+=age= variables, and we omit all observations with missing
+observations.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  f <- "http://fmwww.bc.edu/ec-p/data/wooldridge/wage2.dta"
+  data <- read.dta(f)
+  data <- data[ , c("wage", "educ", "age")]
+  data <- na.omit(data)
+#+end_src
+
+A quick visualization reveals the distribution of wages in the data
+set:
+
+#+CAPTION: Loess regression
+#+LABEL: fig:loess 
+#+begin_src R :results output graphics :file fig1.png :width 800 :height 400 :session :tangle yes :exports both
+  hist(data$wage, xlab = "wage", main = "", col = "grey", border = "white")
+#+end_src
+
+#+RESULTS:
+[[file:fig1.png]]
+
+Roughly following page 38 of the lecture notes, we create a rough
+measure of educational attainment from the =educ= variable.  
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  e1 <- ifelse(data$educ %in% 1:12, 1, 0)
+  e2 <- ifelse(data$educ %in% 13:14, 1, 0)
+  e3 <- ifelse(data$educ %in% 15:16, 1, 0)
+  e4 <- ifelse(data$educ %in% 17:18, 1, 0)
+#+end_src
+
+The categorical education variables sum to one, and the =lm()=
+function will force-drop one of the variables.  Note that the
+intercept in this regression reflects the mean wage of the =e4= class.
+The other coefficients reflect the relative wages of the other three
+classes.
+
+#+begin_src R :results output :exports both :tangle yes :session
+  (m1 <- lm(wage ~ 1 + e1 + e2 + e3 + e4, data = data))
+#+end_src
+
+#+RESULTS:
+: 
+: Call:
+: lm(formula = wage ~ 1 + e1 + e2 + e3 + e4, data = data)
+: 
+: Coefficients:
+: (Intercept)           e1           e2           e3           e4  
+:     1196.96      -350.46      -229.97       -90.51           NA
+
+Suppose we want to estimate the premium on education, relative to the
+least educated class.  We then specifiy the regression:
+
+#+begin_src R :results output latex :exports both :tangle yes :session
+  xtable(m2 <- lm(wage ~ 1 + e2 + e3 + e4, data = data))
+#+end_src
+
+#+RESULTS:
+#+BEGIN_LaTeX
+% latex table generated in R 2.14.1 by xtable 1.7-0 package
+% Sun Jan 20 17:39:38 2013
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & 846.4948 & 17.4837 & 48.42 & 0.0000 \\ 
+  e2 & 120.4929 & 34.8322 & 3.46 & 0.0006 \\ 
+  e3 & 259.9565 & 32.5528 & 7.99 & 0.0000 \\ 
+  e4 & 350.4640 & 42.6787 & 8.21 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+#+END_LaTeX
+
+

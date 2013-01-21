@@ -3,6 +3,7 @@
 #+OPTIONS:     toc:nil num:nil 
 #+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{hyperref}
 #+LATEX_HEADER: \usepackage{booktabs}
 #+LATEX_HEADER: \usepackage{dcolumn}
 #+LATEX_HEADER: \usepackage{subfigure}
@@ -12,228 +13,95 @@
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
-#+LATEX: \renewcommand{\In}{{\bf I}_n}
-#+LATEX: \renewcommand{\B}{{\bf B}}
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\x}{{\bf x}}
+#+LATEX: \renewcommand{\M}{{\bf M}}
 #+LATEX: \renewcommand{\A}{{\bf A}}
-#+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
-#+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
+#+LATEX: \renewcommand{\P}{{\bf P}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
+#+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \renewcommand{\email}[1]{\textcolor{blue}{\texttt{#1}}}
+#+LATEX: \renewcommand{\id}[1]{{\bf I}_{#1}}
+#+LATEX: \newcommand{\myheader}[1]{\textcolor{black}{\textbf{#1}}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
-\textbf{Matrix operations in \texttt{R}} \hfill
+*Preliminaries and setup* \hfill
 *ARE212*: Section 01 \\ \\
 
-This first section is meant to give a brief introduction to data
-manipulation in =R= that will support the work in future sections.  It
-may not be exciting, but it's incredibly exciting.
+The objective of this section is to review the syllabus and the =R=
+environment.  With remaining time, I will introduce the Github
+repository for these sections, submit basic code puzzles, and make a
+shameless pitch for the [[www.ecohack.org][\email{ecohack.org}]] conference.\\
 
-* Creating matrices
+*Download \texttt{R}*: The download of =R= will vary by
+operating system, but it will begin here in any event:\\
 
-There are a variety of data objects in =R=, including numbers, vectors,
-matrices, strings, and dataframes.  We will mainly be working with
-vectors and matrices, which are quick to create and manipulate in =R=.
-The =matrix= function will create a matrix, according to the
-supplied arguments.
+[[http://cran.r-project.org/][\email{cran.r-project.org}]] \\
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-matrix(1:6, ncol=2)
-#+END_SRC
+The online documentation and installer routines are comprehensive.  If
+you are new to =R=, then it might make sense to use the Mac or Windows
+distribution, along with the built-in editor to write and evaluate
+code. For the tech-oriented, the Linux distribution is very flexible;
+and I'd use [[http://www.gnu.org/software/emacs/][Emacs]] with the [[http://ess.r-project.org/][ESS]] package for editing.  If you are
+interested in using the Linux distribution and are having trouble with
+the setup, please see me.\\
 
-#+results:
-:      [,1] [,2]
-: [1,]    1    4
-: [2,]    2    5
-: [3,]    3    6
+In order to download specific packages that are not bundled with the
+base distribution of =R=, such as the =foreign= package, you'll enter
+the following commands to install and load the package:
 
-The =ncol= option specifies the number of columns for the output
-matrix; and the default behavior of =matrix= is to cycle through by
-column.  To cycle through by rows, you'll have to set the optional
-argument =byrow=TRUE=.
+#+begin_src R :results none :exports code :tangle yes
+  install.packages("foreign")
+  library(foreign)
+#+end_src
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-matrix(1:6, ncol=3, byrow=TRUE)
-#+END_SRC
+Once =foreign= is loaded, you'll have access to all of its constituent
+functions, including =read.dta= which will convert a Stata data file
+into an =R= data frame.\\
 
-#+RESULTS:
-:      [,1] [,2] [,3]
-: [1,]    1    2    3
-: [2,]    4    5    6
+*Github repo*: I will primarily use bSpace to disseminate the
+section notes.  You don't need to know anything about Github to
+productively and successfully engage in this section.  The final
+version of the notes will be posted at least one week before section
+as a PDF on Blackboard.  That said, if you want to review an advanced,
+rough copy of the notes, you can browse the Github repo for this
+section, and the address is found in the syllabus.  Github is an
+immensely useful collaborative coding site.  You will find a full
+revision history of the code and notes; and if you see any problems,
+you can submit a patch.  This will provide a gentle but useful
+introduction to the type of open source project that is common in the
+Bay Area tech industry.  Many of the facilities developed for
+collaborative coding are incredibly valuable for joint research
+projects.\\
 
-Suppose we wanted to check to see if the first matrix was equal to the
-transpose of the second.  This is clearly the case --- we can see that
-it is.  But in code, it would be cumbersome to check this condition
-using the previous two commands.  Instead, we can assign the matrices
-to variables for use in subsequent manipulations.  The =<-= operator
-assigns the arbitrary object to the supplied variable:
+*Linear algebra puzzles*: These notes will provide a code illustration
+ of the Linear Algebra review in Chapter 1 of the lecture notes.
+ Don't worry if you can't solve these puzzles.  Come back to them
+ later, once we have gone over =R= code in more detail.  There are
+ many correct ways to solve these puzzles.  We will go over a few
+ solutions in section.
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-A <- matrix(1:6, ncol=2)
-B <- matrix(1:6, ncol=3, byrow=TRUE)
-#+END_SRC
+ 1. Let $\id{5}$ be a $5 \times 5$ identity matrix.  Demonstrate that
+    $\id{5}$ is symmetric and idempotent using simple functions in
+    =R=.
 
-#+RESULTS:
+ 2. Generate a $2 \times 2$ idempotent matrix $\X$, where $\X$ is not
+    the identity matrix.  Demonstrate that $\X = \X\X$.
 
-The \texttt{=} operator also assigns values, with a slightly different
-behavior; and it is common practice to use the \texttt{=} assignment
-for function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] for a
-description of other standard practices in =R=.]  The \texttt{==}
-comparison operator will yield \texttt{TRUE} or \texttt{FALSE}:
+ 3. Generate two random variables, $\x$ and $\e$, of dimension $n =
+    100$ such that $\x, \e \sim N(0,1)$.  Generate a random
+    variable $\y$ according to the data generating process $y_i =
+    x_i + e_i$.  Show that if you regress $\y$ on $\x$ using the
+    canned linear regression routine =lm()=, then you will get an
+    estimate of the intercept $\beta_0$ and the coefficient on $\x$,
+    $\beta_1$, such that $\beta_0 = 0$ and $\beta_1 = 1$.
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-A == t(B)
-#+END_SRC
-
-#+RESULTS:
-:      [,1] [,2]
-: [1,] TRUE TRUE
-: [2,] TRUE TRUE
-: [3,] TRUE TRUE
-
-Note that =t()= will return the tranpose of the supplied matrix.  Each
-element is checked individually, and each is identical in matrix $\A$
-and $\Bp$.  To check the truthiness of the statement that all elements
-are identical, we need only to employ the =all= function:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-all(A == t(B))
-#+END_SRC
-
-#+RESULTS:
-: [1] TRUE
-
-We can get a list of all the object currently available in memory with
-the =ls()= function, which is useful as the assignments begin to
-accumulate:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-ls()
-#+END_SRC
-
-Note that without assignment, the transpose of $\B$, or =t(B)=, is
-created on the fly, remaining anonymous.
-
-* Matrix operations
-
-Matrix muliplication in =R= is bound to =%*%=, whereas scalar
-multiplication is bound to =*=.  Consider the product $\B\A$:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-B %*% A
-#+END_SRC
-
-#+RESULTS:
-:      [,1] [,2]
-: [1,]   14   32
-: [2,]   32   77
-
-The dimensions have to line up properly for matrix multiplication to
-be appropriately applied, otherwise =R= returns an error, as is the
-case with the product $\B\Ap$:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-B %*% t(A)
-#+END_SRC
-
-#+RESULTS:
-: Error in B %*% t(A) : non-conformable arguments
-
-If scalar multiplication is applied to matrices of exactly the same
-dimensions, then the result is element-wise multiplication.  This type
-of operation is sometimes called the Hadamard product, denoted $\B
-\circ \Ap$:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-B * t(A)
-#+END_SRC
-
-#+RESULTS:
-:      [,1] [,2] [,3]
-: [1,]    1    4    9
-: [2,]   16   25   36
-
-More common, if we want to scale all elements by a factor of two, say,
-we just multiply a matrix by a scalar; but note that =class(2)= must
-be not be =matrix= but rather =numeric= so as to avoid a
-non-conformable error:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-A * 2
-#+END_SRC
-
-#+RESULTS:
-:      [,1] [,2]
-: [1,]    2    8
-: [2,]    4   10
-: [3,]    6   12
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-A * matrix(2)
-#+END_SRC
-
-#+RESULTS:
-: Error in A * matrix(2) : non-conformable arrays
-
-Consider a more complicated operation, whereby each column of a matrix
-is multiplied element-wise by another, fixed column.  We encounter
-this situation frequently in time series analysis to test for
-parameter instability.  Here, each column of a particular matrix is
-multiplied in-place by a fixed column of residuals.  Let $\e$ be a
-vector defined as an increasing sequence of length three:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-e <- 1:3
-#+END_SRC
-
-Note first that the default sequence in =R= is a column vector, and
-not a row vector.  We would like to =apply= a function to each
-column of $\A$, specifically a function that multiplies each column
-in-place by $\e$.  We must supply a 2 to ensure that the function is
-applied to the second dimension (columns) of $\A$:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-apply(A, 2, function(x) {x * e})
-#+END_SRC
-
-#+RESULTS:
-:      [,1] [,2]
-: [1,]    1    4
-: [2,]    4   10
-: [3,]    9   18
-
-The function that is applied is anonymous, but it could also be
-bound to a variable -- just as a matrix is bound to a variable:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-whoop <- function(x) {x * e}
-apply(A, 2, whoop)
-#+END_SRC
-
-#+RESULTS:
-:      [,1] [,2]
-: [1,]    1    4
-: [2,]    4   10
-: [3,]    9   18
-
-We will often need to define an identity matrix of dimension $n$, or
-$\In$.  This is quick using =diag=:
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-I <- diag(5)
-#+END_SRC
-
-There are many ways to calculate the trace of $\I_5$.  One method has
-been bundled into a function, called =tr()=, that is included in a
-packaged called =psych= which is not included in the base distribution
-of =R=.  We will need to grab and call the library to have access to
-the function, installing it with the command
-=install.packages("psych")=.  For this, you'll need an internet
-connection.
-
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-library(psych)
-tr(I)
-#+END_SRC
-
-#+RESULTS:
-: [1] 5
-
+ 4. Show that if $\lambda_1, \lambda_2, \ldots, \lambda_5$ is are the
+    eigenvectors of a $5 \times 5$ matrix $\A$, then $\mbox{tr}(\A) =
+    \sum_{i=1}^5 \lambda_i$.
