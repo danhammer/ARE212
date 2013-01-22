@@ -31,19 +31,33 @@ header.
 
 The sections are organized as follows:
 
-[`section-01`](https://github.com/danhammer/ARE212/tree/master/section-01) Matrix operations in R
+[`section-01`](https://github.com/danhammer/ARE212/tree/master/section-01) Preliminaries and setup
 
-[`section-02`](https://github.com/danhammer/ARE212/tree/master/section-02) OLS regressions from first principles
+[`section-02`](https://github.com/danhammer/ARE212/tree/master/section-02) Matrix operations in R
 
-[`section-03`](https://github.com/danhammer/ARE212/tree/master/section-03) Goodness of fit
+[`section-03`](https://github.com/danhammer/ARE212/tree/master/section-03) OLS regressions from first principles
 
-[`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Hypothesis testing
+[`section-04`](https://github.com/danhammer/ARE212/tree/master/section-04) Goodness of fit
 
-[`section-05`](https://github.com/danhammer/ARE212/tree/master/section-05) Efficiency of GLS and `ggplot2`
+[`section-05`](https://github.com/danhammer/ARE212/tree/master/section-05) Hypothesis testing
 
-[`section-11`](https://github.com/danhammer/ARE212/tree/master/section-11) Spatial analysis in R
+[`section-06`](https://github.com/danhammer/ARE212/tree/master/section-06) Returns to education, empirical example
 
-[`section-12`](https://github.com/danhammer/ARE212/tree/master/section-12) Web scraping
+[`section-07`](https://github.com/danhammer/ARE212/tree/master/section-07) Efficiency of GLS and `ggplot2`
+
+[`section-08`](https://github.com/danhammer/ARE212/tree/master/section-08) Large sample properties of OLS
+
+[`section-09`](https://github.com/danhammer/ARE212/tree/master/section-09) Testing for heteroskedasticity
+
+[`section-10`](https://github.com/danhammer/ARE212/tree/master/section-10) Feasible generalized least squares
+
+[`section-11`](https://github.com/danhammer/ARE212/tree/master/section-11) Serial correlation
+
+[`section-12`](https://github.com/danhammer/ARE212/tree/master/section-12) Instrumental variables
+
+[`section-13`](https://github.com/danhammer/ARE212/tree/master/section-13) Spatial analysis in `R`
+
+[`section-14`](https://github.com/danhammer/ARE212/tree/master/section-14) Web scraping
 
 ## Help me write this!  
 
