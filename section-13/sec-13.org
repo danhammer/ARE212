@@ -81,7 +81,7 @@ The following code plots the map, and presents the results in Figure
 #+CAPTION: Distribution of US farmers markets
 #+LABEL: fig:dens
 #+ATTR_LaTeX: width=0.6\textwidth
-#+begin_src R :results output graphics :file inserts/us-mkts.png :width 700 :height 400 :session :tangle yes :exports both 
+#+begin_src R :results output graphics :file inserts/us-mkts.png :width 800 :height 800 :session :tangle yes :exports both 
   data <- read.csv("../data/farmers-mkts.csv", header=TRUE)
   map("state", interior = FALSE)
   map("state", boundary = FALSE, col = "gray", add = TRUE)
@@ -181,7 +181,7 @@ that the extent is limited by a latitude-longitude bounding box.
 #+CAPTION: Distribution of US farmers markets
 #+LABEL: fig:sel
 #+ATTR_LaTeX: width=0.6\textwidth
-#+begin_src R :results output graphics :exports both :file inserts/sel-mkts.png :width 700 :height 400 :session :tangle yes :exports both 
+#+begin_src R :results output graphics :exports both :file inserts/sel-mkts.png :width 800 :height 800 :session :tangle yes :exports both 
   map("state", interior = FALSE, 
       xlim = c(-117, -101), ylim = c(28, 43))
   map("state", boundary = FALSE, col="gray", add = TRUE, 
