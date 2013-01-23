@@ -40,17 +40,18 @@
 
 \coffee{1}
 
-The purpose of this document is to outline the sections for Max
-Auffhammer's econometrics course, the first semester of the ARE
-econometrics sequence.  The objective of the sections is to introduce
-=R= for econometrics, illustrating the lecture notes with applied,
-coded examples. Actual data work.  \\
+The objective of section is to introduce =R= for econometrics,
+illustrating the lecture notes with applied, coded examples. Actual
+data work.  I will present an example for each section. I hope,
+however, that the sections will be interactive. Bring your laptop, if
+possible!  We will work through the example and extensions together.
+Interrupt me if you have a question.\\
 
 The outline of sections below is based on the progression from
 previous years.  The outline might change, but the final section notes
 will always be posted on bSpace at least one week in advance of
 section. The development version of the notes and =R= code will be
-posted to my Github respository: \\
+posted to my Github repository: \\
 
 \\ \\ [[www.github.com/danhammer/ARE212][\email{github.com/danhammer/ARE212}]] \\
 
@@ -70,7 +71,7 @@ since =auffhammer= is an awesome Github handle.]
  {\bf February 1}        &  Preliminaries and setup                  \vspace{4pt} \\ 
  {\bf February 8}        &  Matrix operations in \texttt{R}          \vspace{4pt} \\ 
  {\bf February 15}       &  OLS regression from first principles     \vspace{4pt} \\ 
- {\bf Februray 22}       &  Goodness of fit                          \vspace{4pt} \\ 
+ {\bf February 22}       &  Goodness of fit                          \vspace{4pt} \\ 
  {\bf March 1}           &  Hypothesis testing                       \vspace{4pt} \\ 
  {\bf March 8}           &  Returns to education, empirical example  \vspace{4pt} \\ 
  {\bf March 15}          &  Efficiency of GLS                        \vspace{4pt} \\ 
@@ -87,13 +88,26 @@ The =R= code for each section will be posted on both bSpace and
 Github, and should run on any machine and any operating system.
 Please feel free to e-mail me with any questions.  \\
 
-*Office hours*: I don't use my office on campus.  In fact, I'm not
- even sure where it is. Instead, I'll be in 204 Giannini from 4:00pm -
- 5:00pm on Tuesdays.  If you can't make regular office hours, please
- e-mail me with questions!  I'll respond promptly, over e-mail or in
+*Office hours*: I do not use my office on campus.  In fact, I'm not
+ sure where it is. Instead, I'll be in 234 Giannini from 4:00pm -
+ 5:00pm on Wednesdays.  \\
+
+*E-mail policy*: If you cannot attend regular office hours, please
+ e-mail me with questions!  I'll respond promptly over e-mail or in
  person within 48 hours.  If I can't answer in less than a paragraph,
- I'll ask you to come to office hours.  I will not hold office hours
+ then I'll ask you to come to office hours.  If you cannot attend
+ those office hours, please e-mail me with questions!  If I can't
+ answer in less than a paragraph, I'll ask you to come to office
+ hours.  It's turtles all the way down.  I will not hold office hours
  on Tuesday, March 19 as I will be at an out-of-town conference.\\
+
+*Laptops*: Please bring your laptop, if possible.  You will be able to
+ follow along in the notes without a laptop, but it will be helpful to
+ write code in real time.  Note, however, that AirBears is an
+ unsecured network, and I can easily spy on your network usage.  I
+ will /never/ outwardly embarrass someone for being on Facebook.  But
+ you should be embarrassed if you are on Facebook during section.
+ Twitter is totally fine.\\
 
 *Homework*: Problem sets will be collected at the end of class on the
  specified date.  Ultimately, Max will decide the deductions for late
@@ -124,16 +138,20 @@ Please feel free to e-mail me with any questions.  \\
 3. *Econometrics*, /Bruce Hansen/, \email{www.ssc.wisc.edu/\char`\~
    bhansen/econometrics/Econometrics.pdf}
 
-*Academic integrity*: /This is cribbed directly from the UC Berkeley
- site/: These are some basic expectations of students with regards to
- academic integrity: \cd Any work submitted should be your own
- individual thoughts, and should not have been submitted for credit in
- another course unless you have prior written permission to re-use it
- in this course from this instructor. \cd All assignments must use
- "proper attribution," meaning that you have identified the original
- source and extent or words or ideas that you reproduce or use in your
- assignment. This includes drafts and homework assignments!  \cd If
- you are unclear about expectations, ask your instructor or GSI.  \cd
- Do not collaborate or work with other students on assignments or
- projects unless you have been given permission or instruction to do
- so.
+*Academic integrity*: Directly from the Berkeley site: These are some
+ basic expectations of students with regards to academic integrity:
+ \cd Any work submitted should be your own individual thoughts, and
+ should not have been submitted for credit in another course unless
+ you have prior written permission to re-use it in this course from
+ this instructor. \cd All assignments must use "proper attribution,"
+ meaning that you have identified the original source and extent or
+ words or ideas that you reproduce or use in your assignment. This
+ includes drafts and homework assignments!  \cd If you are unclear
+ about expectations, ask your instructor or GSI.  \cd Do not
+ collaborate or work with other students on assignments or projects
+ unless you have been given permission or instruction to do so.\\
+
+*Special accommodations*: If you should require any disability-related
+ accommodations during our sections, lecture, or exams, please see me
+ privately.  You will ultimately need to procure an accommodations
+ from DSP (\email{dsp.berkeley.edu}), which will contact Max directly.
