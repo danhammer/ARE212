@@ -28,8 +28,8 @@
  \end{tabular}
 \hfill
 \begin{tabular}{ l l }
- {\bf Office hours}          &  Tuesdays, 4:00PM-5:00PM         \\
- {\bf OH location}           &  204 GIANNINI                    \\
+ {\bf Office hours}          &  Wednesdays, 4:00PM-5:00PM         \\
+ {\bf OH location}           &  234 GIANNINI                    \\
  {\bf e-mail}                &  \href{mailto:danhammer@berkeley.edu} {\email{danhammer@berkeley.edu}}  \\
  {\bf twitter}               &  \href{www.twitter.com/econohammer}{\email{@econohammer}}            \\
 \end{tabular}
