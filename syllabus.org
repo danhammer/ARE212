@@ -28,7 +28,7 @@
  \end{tabular}
 \hfill
 \begin{tabular}{ l l }
- {\bf Office hours}          &  Wednesdays, 4:00PM-5:00PM         \\
+ {\bf Office hours}          &  Thursdays, 5:00PM-6:00PM         \\
  {\bf OH location}           &  234 GIANNINI                    \\
  {\bf e-mail}                &  \href{mailto:danhammer@berkeley.edu} {\email{danhammer@berkeley.edu}}  \\
  {\bf twitter}               &  \href{www.twitter.com/econohammer}{\email{@econohammer}}            \\
@@ -41,15 +41,15 @@
 \coffee{1}
 
 The objective of section is to introduce =R= for econometrics,
-illustrating the lecture notes with applied, coded examples. Actual
-data work.  I will present an example for each section. I hope,
-however, that the sections will be interactive. Bring your laptop, if
-possible!  We will work through the example and extensions together.
-Interrupt me if you have a question.\\
+illustrating the lecture notes with applied examples. Actual data
+work.  Each section, I will present a coded example. I hope, however,
+that the sections will be interactive. Bring your laptop, if possible!
+We will work through the example and extensions together.  Interrupt
+me with questions.\\
 
-The outline of sections below is based on the progression from
-previous years.  The outline might change, but the final section notes
-will always be posted on bSpace at least one week in advance of
+The following outline of section topics is based on the progression
+from previous years.  The outline might change, but the final section
+notes will always be posted on bSpace at least one week in advance of
 section. The development version of the notes and =R= code will be
 posted to my Github repository: \\
 
@@ -57,9 +57,9 @@ posted to my Github repository: \\
 
 You do not need to know anything about Github to productively and
 successfully engage in section.  But you will be able to see the
-evolution of the notes, as well as the structure and protocol
-associated with production code.  If you want to collaborate on the
-notes, join Github and send me an e-mail.  I will help get you
+evolution of the notes on Github, as well as the structure and
+protocol associated with production code.  If you want to collaborate
+on the notes, join Github and send me an e-mail.  I will help get you
 started, if needed.[fn:: A side note: I have reserved the handle
 =auffhammer=, just in case Max ever wants to join.  I will try dearly
 to extract the rents associated with absolute scarcity.  He claims
@@ -89,8 +89,8 @@ Github, and should run on any machine and any operating system.
 Please feel free to e-mail me with any questions.  \\
 
 *Office hours*: I do not use my office on campus.  In fact, I'm not
- sure where it is. Instead, I'll be in 234 Giannini from 4:00pm -
- 5:00pm on Wednesdays.  \\
+ sure where it is. Instead, I'll be in 234 Giannini from 5:00pm -
+ 6:00pm on Thursdays.  \\
 
 *E-mail policy*: If you cannot attend regular office hours, please
  e-mail me with questions!  I'll respond promptly over e-mail or in
@@ -99,7 +99,7 @@ Please feel free to e-mail me with any questions.  \\
  those office hours, please e-mail me with questions!  If I can't
  answer in less than a paragraph, I'll ask you to come to office
  hours.  It's turtles all the way down.  I will not hold office hours
- on Tuesday, March 19 as I will be at an out-of-town conference.\\
+ on Thursday, March 21 as I will be at an out-of-town conference.\\
 
 *Laptops*: Please bring your laptop, if possible.  You will be able to
  follow along in the notes without a laptop, but it will be helpful to
@@ -154,4 +154,5 @@ Please feel free to e-mail me with any questions.  \\
 *Special accommodations*: If you should require any disability-related
  accommodations during our sections, lecture, or exams, please see me
  privately.  You will ultimately need to procure an accommodations
- from DSP (\email{dsp.berkeley.edu}), which will contact Max directly.
+ letter from the Disabled Students Program (\email{dsp.berkeley.edu}),
+ which will be sent directly to Max.
