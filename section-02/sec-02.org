@@ -17,6 +17,20 @@
 #+LATEX: \renewcommand{\A}{{\bf A}}
 #+LATEX: \renewcommand{\Bp}{{\bf B}^{\prime}}
 #+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
+
+#+LATEX: \renewcommand{\X}{{\bf X}}
+#+LATEX: \renewcommand{\Y}{{\bf Y}}
+#+LATEX: \renewcommand{\Z}{{\bf Z}}
+#+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
+#+LATEX: \renewcommand{\Yp}{{\bf Y}^{\prime}}
+#+LATEX: \renewcommand{\Zp}{{\bf Z}^{\prime}}
+
+#+LATEX: \renewcommand{\i}{\iota}
+#+LATEX: \renewcommand{\ip}{\iota^{\prime}}
+
+#+LATEX: \renewcommand{\W}{{\bf W}}
+#+LATEX: \renewcommand{\Wp}{{\bf W}^{\prime}}
+
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
@@ -237,3 +251,43 @@ tr(I)
 #+RESULTS:
 : [1] 5
 
+* Linear algebra puzzles
+
+1. Let $\X = [1 \hspace{6pt} 2 \hspace{6pt} 3]$, $\Y = [2 \hspace{6pt}
+   3 \hspace{6pt} 4]$, and $\Z = [3 \hspace{6pt} 4 \hspace{6pt} 7]$.
+   Define $\W = [\Xp \hspace{6pt} \Yp \hspace{6pt} \Zp]$.  Calculate
+   $\W^{-1}$.  If you cannot take the inverse, explain why not and
+   adjust $\W$ so that you /can/ take the inverse. /Hint/: the
+   =solve()= function will return the inverse of the supplied
+   matrices.
+
+2. Show, somehow, that $(\Xp)^{-1} = (\X^{-1})^{\prime}$.
+
+3. Generate a $3 \times 3$ matrix $\X$, where each element is drawn
+   from a standard normal distribution.  Let $\A = \I_3 -
+   \frac{1}{n}\i\ip$ be a demeaning matrix, with $\i$ a $3 \times 1$
+   vector of ones.  First show that $\A$ is idempotent and
+   symmetric. Next show that each row of the matrix $\X\A$ is the
+   deviation of each row and $\X$ from its mean.  Finally, show that
+   $(\X\A)(\X\A)^{\prime} = \X\A\Xp$, first through algebra and then
+   =R= code.
+
+4. Demonstrate from random matrices that $(\X\Y\Z)^{-1} =
+   \Z^{-1}\Y^{-1}\X^{-1}$.
+
+5. Let $\X$ and $\Y$ be square $20 \times 20$ matrices.  Show that
+   $tr(\X + \Y) = tr(\X) + tr(\Y)$.
+
+6. Generate a diagonal matrix $\X$, where each element on the
+   diagnonal is drawn from $U[10,20]$.  Show that the decomposition of
+   $\X = \sqrt{\X}\sqrt{\X}$.  That is, calculate the Cholesky
+   decomposition, for example, of $\X$ through the =chol()= function
+   and multiply it by itself to return $\X$.
+
+7. Demonstrate that for any scalar $c$ and any square matrix $\X$ of
+   dimension $n$ that $\det(c\X) = c^n \det(\X)$.
+
+8. Demonstrate that for an $m \times m$ matrix $\A$ and a $p \times p$
+   matrix $\B$ that $\det(\A \otimes \B) = \det(\A)^p
+   \det(\B)^m$. /Hint/: Note that $\otimes$ indicates the Kronecker
+   product.  Google the appropriate =R= function.

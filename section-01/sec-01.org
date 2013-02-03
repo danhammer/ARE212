@@ -102,6 +102,63 @@ projects.\\
     estimate of the intercept $\beta_0$ and the coefficient on $\x$,
     $\beta_1$, such that $\beta_0 = 0$ and $\beta_1 = 1$.
 
- 4. Show that if $\lambda_1, \lambda_2, \ldots, \lambda_5$ is are the
+ 4. Show that if $\lambda_1, \lambda_2, \ldots, \lambda_5$ are the
     eigenvectors of a $5 \times 5$ matrix $\A$, then $\mbox{tr}(\A) =
     \sum_{i=1}^5 \lambda_i$.
+
+#+begin_src R :results graphics output :exports none :tangle yes
+  install.packages("foreign")
+  
+  I <- diag(5)
+  print(I)
+  print(I %*% I)
+  
+  all(I == I %*% I)
+  all(I == t(I))
+  
+  X <- matrix(c(1,1,0,0), 2)
+  all(X == X %*% X)
+  
+  n <- 100
+  x <- rnorm(n)
+  e <- rnorm(n)
+  y <- x + e
+  
+  lm(y ~ x)
+  
+  A <- matrix(runif(25), 5)
+  lambda <- eigen(A)$values
+  print( sum(diag(A)) )
+  print( sum(lambda) )
+  
+  
+#+end_src
+
+#+results:
+#+begin_example
+     [,1] [,2] [,3] [,4] [,5]
+[1,]    1    0    0    0    0
+[2,]    0    1    0    0    0
+[3,]    0    0    1    0    0
+[4,]    0    0    0    1    0
+[5,]    0    0    0    0    1
+     [,1] [,2] [,3] [,4] [,5]
+[1,]    1    0    0    0    0
+[2,]    0    1    0    0    0
+[3,]    0    0    1    0    0
+[4,]    0    0    0    1    0
+[5,]    0    0    0    0    1
+[1] TRUE
+[1] TRUE
+[1] TRUE
+ 
+Call:
+lm(formula = y ~ x)
+
+Coefficients:
+(Intercept)            x  
+  -0.007228     0.946083
+[1] 2.830659
+[1] 2.830659+0i
+#+end_example
+
