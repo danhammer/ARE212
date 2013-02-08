@@ -49,15 +49,14 @@ vectors and matrices, which are quick to create and manipulate in =R=.
 The =matrix= function will create a matrix, according to the
 supplied arguments.
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-matrix(1:6, ncol=2)
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
+matrix(1:6, ncol=3)
 #+END_SRC
 
 #+results:
-:      [,1] [,2]
-: [1,]    1    4
-: [2,]    2    5
-: [3,]    3    6
+:      [,1] [,2] [,3]
+: [1,]    1    3    5
+: [2,]    2    4    6
 
 The =ncol= option specifies the number of columns for the output
 matrix; and the default behavior of =matrix= is to cycle through by
@@ -80,12 +79,19 @@ using the previous two commands.  Instead, we can assign the matrices
 to variables for use in subsequent manipulations.  The =<-= operator
 assigns the arbitrary object to the supplied variable:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-A <- matrix(1:6, ncol=2)
-B <- matrix(1:6, ncol=3, byrow=TRUE)
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
+(A <- matrix(1:6, ncol=2))
+(B <- matrix(1:6, ncol=3, byrow=TRUE))
 #+END_SRC
 
 #+RESULTS:
+:      [,1] [,2]
+: [1,]    1    4
+: [2,]    2    5
+: [3,]    3    6
+:      [,1] [,2] [,3]
+: [1,]    1    2    3
+: [2,]    4    5    6
 
 The \texttt{=} operator also assigns values, with a slightly different
 behavior; and it is common practice to use the \texttt{=} assignment
@@ -93,7 +99,7 @@ for function arguments.[fn:: See the [[http://goo.gl/hgOJ][Google style sheet]] 
 description of other standard practices in =R=.]  The \texttt{==}
 comparison operator will yield \texttt{TRUE} or \texttt{FALSE}:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 A == t(B)
 #+END_SRC
 
@@ -108,7 +114,7 @@ element is checked individually, and each is identical in matrix $\A$
 and $\Bp$.  To check the truthiness of the statement that all elements
 are identical, we need only to employ the =all= function:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 all(A == t(B))
 #+END_SRC
 
@@ -119,9 +125,12 @@ We can get a list of all the object currently available in memory with
 the =ls()= function, which is useful as the assignments begin to
 accumulate:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 ls()
 #+END_SRC
+
+#+results:
+: [1] "A" "B"
 
 Note that without assignment, the transpose of $\B$, or =t(B)=, is
 created on the fly, remaining anonymous.
@@ -131,7 +140,7 @@ created on the fly, remaining anonymous.
 Matrix muliplication in =R= is bound to =%*%=, whereas scalar
 multiplication is bound to =*=.  Consider the product $\B\A$:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 B %*% A
 #+END_SRC
 
@@ -144,7 +153,7 @@ The dimensions have to line up properly for matrix multiplication to
 be appropriately applied, otherwise =R= returns an error, as is the
 case with the product $\B\Ap$:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 B %*% t(A)
 #+END_SRC
 
@@ -156,7 +165,7 @@ dimensions, then the result is element-wise multiplication.  This type
 of operation is sometimes called the Hadamard product, denoted $\B
 \circ \Ap$:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 B * t(A)
 #+END_SRC
 
@@ -170,17 +179,18 @@ we just multiply a matrix by a scalar; but note that =class(2)= must
 be not be =matrix= but rather =numeric= so as to avoid a
 non-conformable error:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 A * 2
 #+END_SRC
 
 #+RESULTS:
 :      [,1] [,2]
-: [1,]    2    8
-: [2,]    4   10
-: [3,]    6   12
+: [1,]    1    4
+: [2,]    2    5
+: [3,]    3    6
+: Error in A %*% 2 : non-conformable arguments
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 A * matrix(2)
 #+END_SRC
 
@@ -194,9 +204,15 @@ parameter instability.  Here, each column of a particular matrix is
 multiplied in-place by a fixed column of residuals.  Let $\e$ be a
 vector defined as an increasing sequence of length three:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
-e <- 1:3
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
+(e <- matrix(1:3))
 #+END_SRC
+
+#+results:
+:      [,1]
+: [1,]    1
+: [2,]    2
+: [3,]    3
 
 Note first that the default sequence in =R= is a column vector, and
 not a row vector.  We would like to =apply= a function to each
@@ -204,11 +220,12 @@ column of $\A$, specifically a function that multiplies each column
 in-place by $\e$.  We must supply a 2 to ensure that the function is
 applied to the second dimension (columns) of $\A$:
 
-#+BEGIN_SRC r :results output :exports both :session :tangle yes
+#+BEGIN_SRC R :results output :exports both :session :tangle yes
 apply(A, 2, function(x) {x * e})
 #+END_SRC
 
 #+RESULTS:
+: Error in x * e : non-numeric argument to binary operator
 :      [,1] [,2]
 : [1,]    1    4
 : [2,]    4   10
