@@ -11,6 +11,8 @@
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.1,0.2,0.9}}}
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
+#+LATEX: \renewcommand{\f}{{\bf f}}
+#+LATEX: \renewcommand{\g}{{\bf g}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
 #+LATEX: \renewcommand{\X}{{\bf X}}
 #+LATEX: \renewcommand{\M}{{\bf M}}
@@ -18,10 +20,19 @@
 #+LATEX: \renewcommand{\Xp}{{\bf X}^{\prime}}
 #+LATEX: \renewcommand{\Mp}{{\bf M}^{\prime}}
 #+LATEX: \renewcommand{\y}{{\bf y}}
+#+LATEX: \renewcommand{\Q}{{\bf Q}}
+#+LATEX: \renewcommand{\N}{{\bf N}}
+#+LATEX: \renewcommand{\Qp}{{\bf Q}^{\prime}}
+#+LATEX: \renewcommand{\Np}{{\bf N}^{\prime}}
 #+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\gho}{\hat{\gamma}_1}
+#+LATEX: \renewcommand{\ght}{\hat{\gamma}_2}
+#+LATEX: \renewcommand{\ghth}{\hat{\gamma}_3}
 #+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\and}{\hspace{8pt} \mbox{and} \hspace{8pt}}
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \renewcommand{\sigs}{\sigma^2}
 #+LATEX: \newcommand{\code}[1]{\texttt{#1}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
@@ -29,7 +40,7 @@
 *Ordinary Least Squares* \hfill
 *ARE212*: Section 03 \\ \\
 
-This section is intended to introduce linear regression in \R.  The
+This section is intended to introduce linear regression in =R=.  The
 first step is to read the data set =auto.csv= from the relative path.
 You can also download it from [[https://github.com/danhammer/ARE212/blob/master/data/auto.csv][here]].  We set the option =header= to
 =TRUE=, which treats the first line of the CSV file as variable names,
@@ -49,10 +60,11 @@ We can read the names from the data set; but they aren't much help.
 : [1] "V1" "V2" "V3"
 
 We can replace the column headers with more descriptive variable
-names.  The next command is an example of destructuring.  There are
-three elements in both the original and new list; and each element in
-the original list is reassigned based on its position in the list,
-e.g., the =V1= header is replaced by =price=.
+names.  The next command is an example of destructuring, sort of, in a
+language where destructuring does not really exist.  There are three
+elements in both the original and new list; and each element in the
+original list is reassigned based on its position in the list, e.g.,
+the =V1= header is replaced by =price=.
 #+begin_src R :results output graphics :exports both :tangle yes :session
   names(data) <- c("price", "mpg", "weight")
 #+end_src
@@ -73,7 +85,7 @@ To get a sense of the data, list the first six observations:
 : 5  7827  15   4080
 : 6  5788  18   3670
 
-With the columns appropriately names, we can refer to particular
+With the columns appropriately named, we can refer to particular
 variables within the data set using the unique indexing in =R=, where
 data objects tend to be variants of lists and nested lists.
 
@@ -116,14 +128,13 @@ referenced directly after the data set has been attached.
 #+RESULTS:
 : [1] 22 17 22 20 15 18
 
-The use of /canned/ routines is not permitted for most of this
-class; you'll have to write the econometric routines from first
-principles.  First, create matrices of the data, since we will be
-working mainly with matrix operations.  Let $\y$ be the dependent
-variable, price, and let $\X$ be a matrix of the other car
-characteristics, along with a column of ones prepended.  The
-=cbind()= function binds the columns horizontally and coerces the
-=matrix= class.
+The use of canned routines is not permitted for most of this class;
+you'll have to write the econometric routines from first principles.
+First, create matrices of the data, since we will be working mainly
+with matrix operations.  Let $\y$ be the dependent variable, price,
+and let $\X$ be a matrix of the other car characteristics, along with
+a column of ones prepended.  The =cbind()= function binds the columns
+horizontally and coerces the =matrix= class.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   y <- matrix(price)
@@ -142,7 +153,7 @@ dim(X)[1] == nrow(y)
 #+RESULTS:
 : [1] TRUE
 
-Before preceding, we should =detach= the data frame, so that if we
+Before proceeding, we should =detach= the data frame, so that if we
 reload the =R= script, there won't be any naming conflicts.  The =X=
 and =y= objects will persist, as will =data$mpg=, but we will no
 longer be able to call the variables without referencing the data
@@ -245,3 +256,28 @@ all.equal(tss, ess + rss)
 #+RESULTS:
 : [1] TRUE
 
+* Additional puzzles
+
+1. Write a function =wt.coef()= that will return the OLS coefficient
+   on weight from the regression of car price on the covariate matrix
+   described above.
+
+2. Adjust the function to return a list of coefficients from the same
+   linear regression, appropriately named.
+
+3. Find the estimate of the covariance matrix $\sigs (\Xp\X)^{-1}$ and
+   show that the residuals and covariate matrix are orthogonal.
+
+4. *Partitioned regression*: Generate a $100 \times 5$ matrix $\X$
+   /including/ a column of ones for the intercept. Additionally,
+   generate a vector $\y$ according to the generating process: $$y_i =
+   1 + x_{1i} + 2x_{2i} + 3x_{3i} + 4x_{4i} + \epsilon_i, $$ where
+   $\epsilon_i \sim N(0,1)$.  Let $\Q$ be the first three columns of $\X$
+   and let $\N$ be the final two columns.  In addition, let
+   \begin{eqnarray*}
+      \gho  &=& (\Qp\Q)^{-1}\Qp\y \and \f = \y - \Q\gho   \\
+      \ght  &=& (\Qp\Q)^{-1}\Qp\N \and \g = \N - \Q\ght   \\
+      \ghth &=& \f \cdot \g / ||\g||^2 \and \e = \f - \g \ghth \\
+   \end{eqnarray*}
+   Show that $\hat{\beta} = [\gho - \ght\ghth \hspace{10pt}
+   \ghth]$. Note that the total dimension of $\hat{\beta}$ is 5.
