@@ -46,7 +46,7 @@ You can also download it from [[https://github.com/danhammer/ARE212/blob/master/
 =TRUE=, which treats the first line of the CSV file as variable names,
 rather than an observation.
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  data <- read.csv("../data/auto.csv", header=TRUE)
+  data <- read.csv("auto.csv", header=TRUE)
 #+end_src
 
 #+RESULTS:
@@ -281,3 +281,11 @@ all.equal(tss, ess + rss)
    \end{eqnarray*}
    Show that $\hat{\beta} = [\gho - \ght\ghth \hspace{10pt}
    \ghth]$. Note that the total dimension of $\hat{\beta}$ is 5.
+
+$$\max \int_0^{T} \left[p\cdot f(x_{1t}, x_{2t}) -
+c_{1}(R_1)x_{1t} - c_2 x_{2t} - k \cdot y_t\right] e^{-\delta t}\,dt$$
+subject to 
+\begin{eqnarray*}
+\dot{R} &=& g(x_{2t}) - x_{1t}\\
+x_{2,t+1} &=& y_t
+\end{eqnarray*}

@@ -37,6 +37,11 @@
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
 #+LATEX: \renewcommand{\sigs}{\sigma^{2}}
+#+LATEX: \renewcommand{\sigsh}{\hat{\sigma}^{2}}
+#+LATEX: \renewcommand{\V}{\mathbb{V}}
+#+LATEX: \renewcommand{\and}{\mbox{and}}
+#+LATEX: \renewcommand{\sumi}{\sum_{i=1}^n}
+#+LATEX: \renewcommand{\var}[1]{\textcolor{red}{\mbox{\texttt{#1}}}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
@@ -66,7 +71,7 @@ For reference, consider the regression output, using data we've seen
 before:
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-res <- lm(price ~ 1 + mpg + weight, data=data)
+res <- lm(price ~ 1 + mpg + weight, data = data)
 summary(res)
 #+end_src
 
@@ -93,8 +98,10 @@ Multiple R-squared: 0.2934,	Adjusted R-squared: 0.2735
 F-statistic: 14.74 on 2 and 71 DF,  p-value: 4.425e-06
 #+end_example
 
-In order to perform individual t-tests, we will first have to identify
-the standard errors for each coefficient, noting the distribution in
+We print the full results to examine the $F$-statistic.  Under normal
+circumstances, consider just printing =coef(summary(res))=. In order
+to perform individual t-tests, we will first have to identify the
+standard errors for each coefficient, noting the distribution in
 (2.63).  The variance of the error, $\sigs$, can be numerically
 estimated, as shown below:
 
@@ -127,7 +134,7 @@ t-tests.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   b <- solve(t(X) %*% X) %*% t(X) %*% y
-  apply(b / se, 1, function(t) {2*pt(-abs(t), df=n-k)})
+  apply(b / se, 1, function(t) {2 * pt(-abs(t), df = (n - k))})
 #+end_src
 
 #+RESULTS:
@@ -183,3 +190,188 @@ the joint test.  Simplification failed.  Let's try again.
 
 It worked!  And the probability of observing the F-statistic with
 degrees of freedom $J=2$ and $n-k = 71$ is printed as well.  
+
+* Puzzle (sort of)
+
+We will replicate the results of a sort of silly study that examines
+the causes of McCarthyism, using a /path model/.  The study was
+published in the /American Political Science Review/ by Gibson (1988)
+and reprinted in Freedman (2009) to illustrate path models, which are
+essentially a simple graphical framework to keep track of direct and
+indirect causation.  The path model is recreated in Figure
+(\ref{fig:path}), and shows that tolerance scores of both the masses
+and elites directly impact repression.  This is a theoretical
+framework.  The unlabeled connection between the tolerance nodes
+indicates association rather than causation.  The repression and
+tolerance scores have been standardized, so that they have mean equal
+to zero and standard deviation equal to one.\\
+
+The purpose of this exercise is to build up an intuition of the
+relationship between the OLS estimates and covariate correlations.  
+
+\begin{figure}[t]
+        \centering
+        
+        \begin{picture}(150,150)(0,0)
+        
+        \put(0,18){$\var{mass tolerance}$}
+        \put(0,127){$\var{elite tolerance}$}
+        \put(110,72){$\var{repression}$}
+
+        \put(10,30){\circle*{5}}
+        \put(10,120){\circle*{5}}
+        \put(100,75){\circle*{5}}
+
+        \thicklines
+
+        \put(10,30){\vector(2,1){87}}
+        \put(10,120){\vector(2,-1){87}}
+
+        \thinlines
+        
+        \qbezier(8,36)(0,75)(8,114)
+
+        \end{picture}
+
+        \caption{Path model, causes of McCarthyism, reproduced from
+        Freedman (2009)}
+
+        \label{fig:path}
+\end{figure}
+
+Gibson reports the correlation matrix for the path diagram:
+
+|         | Masses | Elite | Repress |
+|---------+--------+-------+---------|
+| Masses  |   1.00 |  0.52 |   -0.26 |
+| Elite   |   0.52 |  1.00 |   -0.42 |
+| Repress |  -0.26 | -0.42 |    1.00 |
+
+His model for political repression for $n = 36$ states is given by:
+\begin{equation}
+\var{repression} = \beta_1 \cdot \var{mass tolerance} + \beta_2 \cdot
+\var{elite tolerance} + \epsilon,
+\label{eq:one}
+\end{equation} Denote $\var{mass tolerance}$ as $M$, $\var{elite
+tolerance}$ as $E$, and $\var{repression}$ as $R$, such that Equation
+(\ref{eq:one}) becomes $R = \beta_1 M + \beta_2 E + \epsilon$.  Finally,
+let $\X = [M \hspace{8pt} E]$, so that $R = \X\beta + \epsilon$.  \\
+
+Here is the kicker.  Since, all  variables were standardized, we know that 
+\[
+\frac{1}{n} \sum_{i=1}^n E_i = 0 \qquad \and \qquad \frac{1}{n}\sum_{i=1}^n E_i^2 = 1
+\]
+
+This is true, also, for $M$ and $R$.  Being careful about matrix
+multiplication, we can compute the following:
+\begin{equation}
+\Xp\X = \left[ 
+\begin{array}{cc}
+\sumi M_i^2 & \sumi M_i E_i \\
+\sumi M_i E_i & \sumi E_i^2  \\
+\end{array}\right] = 
+n\left[
+\begin{array}{cc}
+1 & r_{ME} \\
+r_{ME} & 1 
+\end{array}
+\right]=
+n\left[
+\begin{array}{cc}
+1 & 0.52 \\
+0.52 & 1 
+\end{array}
+\right]
+\end{equation}
+
+\begin{equation}
+\Xp R = \left[ 
+\begin{array}{cc}
+\sumi M_i R_i  \\
+\sumi E_i R_i \\
+\end{array}\right] = 
+n\left[
+\begin{array}{cc}
+r_{MR} \\
+r_{ER} 
+\end{array}
+\right]=
+n\left[
+\begin{array}{cc}
+-0.26 \\
+-0.42 
+\end{array}
+\right]
+\end{equation}
+
+We don't even need the actual data to compute the OLS coefficients!
+Specifically, $\beta = (\Xp\X)^{-1}\Xp R$:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  n <- 36
+  xtx <- n * matrix(c(1, 0.52, 0.52, 1), ncol = 2)
+  xtr <- n * matrix(c(-0.26, -0.42), ncol = 1)
+  (b <- solve(xtx) %*% xtr)
+#+end_src  
+
+#+RESULTS:
+:             [,1]
+: [1,] -0.05701754
+: [2,] -0.39035088
+
+Given standardized tolerance and repression scores, we can use the
+following formula from page 85 in Freedman to calculate the model
+variance: $\sigsh = 1 - \hat{\beta}_1^2 - \hat{\beta}_2^2 -
+2\hat{\beta}_1\hat{\beta}_2 r_{ME}$
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  p <- 3
+  (sigma.hat.sq <- (n / (n - p)) * (1 - b[1]^2 - b[2]^2 - 2 * b[1] * b[2] * 0.52))
+#+end_src  
+
+#+RESULTS:
+: [1] 0.8958852
+
+There is an implicit intercept, since the scores are standardized, so
+that $p = 3$.  We compute the standard errors from the estimated
+covariance matrix, $\sigsh(\Xp\X)^{-1}$.  Note that $\V(\hat{\beta}_k|\X)
+= \sigsh(\Xp\X)_{kk}^{-1}$:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  vcov.mat <- sigma.hat.sq * solve(xtx)
+  se1 <- sqrt(vcov.mat[1,1])
+  se2 <- sqrt(vcov.mat[2,2])
+  pt(b[1]/se1, n - p)
+  pt(b[2]/se2, n - p)
+#+end_src  
+
+#+RESULTS:
+: [1] 0.3797346
+: [1] 0.02109715
+
+The coefficient on $\var{mass tolerance}$ is not significant, but the
+coefficient on $\var{elite tolerance}$ is significant.  But are the
+two coefficients significantly different from each other?  Let $\Rb =
+[1 \hspace{8pt} -1]$ and $\r = [0]$.  Then the following test
+statistic will test that the two coefficients are equal.
+
+\begin{equation}
+\label{eq:F}
+F = \frac{(\Rb \hat{\beta} - \r)^{\prime}[\Rb(\Xp\X)^{-1}\Rbp]^{-1}(\Rb \hat{\beta} - \r)}{\sigsh}
+\end{equation}
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  R <- t(matrix(c(-1, 1))); r <- 0
+  G <- R %*% b - r
+  (F <- (G %*% R %*% solve(xtx) %*% t(R) %*% t(G))/sigma.hat.sq)
+#+end_src  
+
+#+RESULTS:
+:            [,1]
+: [1,] 0.01435461
+
+The test statistic follows the $F$-distribution, and is not
+significant at any reasonable $p$-value.  So, while $\var{elite
+tolerance}$ may be significant in the regression of repression on
+tolerance, it is not significantly different than the insignificant
+variable $\var{mass tolerance}$.

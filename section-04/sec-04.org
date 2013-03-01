@@ -13,11 +13,13 @@
 #+LATEX: \newcommand{\ep}{{\bf e}^\prime}
 #+LATEX: \renewcommand{\e}{{\bf e}}
 #+LATEX: \renewcommand{\b}{{\bf b}}
+#+LATEX: \renewcommand{\c}{{\bf c}}
 #+LATEX: \renewcommand{\bp}{{\bf b}^{\prime}}
 #+LATEX: \renewcommand{\bs}{{\bf b}^{*}}
 #+LATEX: \renewcommand{\I}{{\bf I}}
 #+LATEX: \renewcommand{\X}{{\bf X}}
 #+LATEX: \renewcommand{\M}{{\bf M}}
+#+LATEX: \renewcommand{\N}{{\bf N}}
 #+LATEX: \renewcommand{\A}{{\bf A}}
 #+LATEX: \renewcommand{\Ap}{{\bf A}^{\prime}}
 #+LATEX: \renewcommand{\B}{{\bf B}}
@@ -34,41 +36,59 @@
 #+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
+#+LATEX: \renewcommand{\V}{\mathbb{V}}
+#+LATEX: \renewcommand{\Q}{{\bf Q}}
+#+LATEX: \renewcommand{\N}{{\bf N}}
+#+LATEX: \renewcommand{\Qp}{{\bf Q}^{\prime}}
+#+LATEX: \renewcommand{\Np}{{\bf N}^{\prime}}
+#+LATEX: \renewcommand{\yp}{{\bf y}^{\prime}}
+#+LATEX: \renewcommand{\gho}{\hat{\gamma}_1}
+#+LATEX: \renewcommand{\ght}{\hat{\gamma}_2}
+#+LATEX: \renewcommand{\ghth}{\hat{\gamma}_3}
+#+LATEX: \renewcommand{\yh}{\hat{{\bf y}}}
+#+LATEX: \renewcommand{\and}{\hspace{8pt} \mbox{and} \hspace{8pt}}
+#+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
+#+LATEX: \renewcommand{\sigs}{\sigma^2}
+#+LATEX: \renewcommand{\f}{{\bf f}}
+#+LATEX: \renewcommand{\g}{{\bf g}}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
 *Goodness of Fit* \hfill
 *ARE212*: Section 04 \\ \\
 
-The idea behind this section is to study the behavior of the centered
-and uncentered $\Rsq$ as cofactors are incrementally included in the
-regression.  First, we must create a random matrix, where each
-variable is drawn from a standard uniform distribution.  All elements
-are independent and identically distributed, so we can create a very
-long, random vector and reshape it into a rectangular matrix.  For
-convenience and practice writing functions in =R=, we show a general
-function that accepts the dimensions ($n$ rows and $k$ columns) of the
-matrix.  The function generates a long vector of length $n \cdot k$
-and then reshapes it into an $n \times k$ matrix.
+The objective of this section is to (1) study the behavior of the
+centered $\Rsq$ as cofactors are incrementally included in the
+regression, and (2) use =R= to check the behavior of Problem 2 in the
+optional section of the first problem set.  
+* Centered $R^2$
+
+First, we create a random matrix, where each element is drawn from a
+standard uniform distribution --- another context to practice the
+=function()= structure. The function =randomMat()= generates a long
+vector of length $n \cdot k$ and then reshapes it into an $n \times k$
+matrix.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  random.mat <- function(n, k) {
+  randomMat <- function(n, k) {
     v <- runif(n*k)
     matrix(v, nrow=n, ncol=k)
   }
 #+end_src
 
-The function bound to =random.mat()= behaves as we would expect:
+#+RESULTS:
+
+The function bound to =randomMat= behaves as we would expect:
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  random.mat(3,2)
+  randomMat(3,2)
 #+end_src
 
 #+RESULTS:
 :            [,1]      [,2]
-: [1,] 0.54596729 0.1595011
-: [2,] 0.09682105 0.8549968
-: [3,] 0.92691069 0.5953242
+: [1,] 0.07745039 0.2949981
+: [2,] 0.24275611 0.7549059
+: [3,] 0.42482717 0.5355208
 
 Another useful function for this section will be to create a square
 demeaning matrix $\A$ of dimension $n$.  The following function just
@@ -76,18 +96,22 @@ wraps a few algebraic maneuvers, so that subsequent code is easier to
 read.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  demean.mat <- function(n) {
+  demeanMat <- function(n) {
     ones <- rep(1, n)
     diag(n) - (1/n) * ones %*% t(ones)
   }
 #+end_src
 
+#+results:
+
 As is described in the notes, pre-multiplying a matrix $\B$ by $\A$
 will result in a matrix $\C = \A\B$ of deviations from the column
-means of $\B$. Check that this is true.
+means of $\B$. Check that this is true.  This may seem like a
+roundabout way to check the equivalence of the matrices; but it
+provides the opportunity to practice the =apply= function.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  A <- demean.mat(3)
+  A <- demeanMat(3)
   B <- matrix(1:9, nrow=3)
   col.means <- apply(B, 2, mean)
   C <- apply(B, 1, function(x) {x - col.means})
@@ -118,7 +142,7 @@ follows:
 \Rsq = \frac{\bp_{2}\Xsp_{2}\Xs_{2}\b_{2}}{\ysp\ys},
 \end{equation} where $\ys = \A\y$, $\Xs_2$ = \A\X_2$, and $\b_2 =
 (\Xsp_{2}\Xs_{2})^{-1}\Xsp_{2}\ys$.  Noting that $\A$ is both
-symmetric and idempotent, we can rewrite Eq. (\ref{eq:rsq}) in terms
+symmetric and idempotent, we can rewrite Equation (\ref{eq:rsq}) in terms
 of matrices already defined, thereby simplifying the subsequent code
 dramatically.  From my limited experience with programming, the best
 code is that which reflects the core idea of the procedure; more time
@@ -132,11 +156,11 @@ dependent vector and associated cofactor matrix:
 #+begin_src R :results output graphics :exports both :tangle yes :session
   R.squared <- function(y, X) {
     n <- nrow(X)
-    A <- demean.mat(n)
+    A <- demeanMat(n)
     xtax <- t(X) %*% A %*% X
     ytay <- t(y) %*% A %*% y
     b2 <- solve(xtax) %*% t(X) %*% A %*% y
-    t(b2) %*% xtax %*% b2 / ytay
+    return(t(b2) %*% xtax %*% b2 / ytay)
   }
   
   R.squared(y, X2)
@@ -146,7 +170,7 @@ dependent vector and associated cofactor matrix:
 :           [,1]
 : [1,] 0.2933891
 
-Without some penalty for addtional cofactors, the $\Rsq$ will
+Without some penalty for addtional cofactors, the centered $\Rsq$ will
 monotonically increase with the number of columns in the cofactor
 matrix $\X$.  This function is plotted in Figure (\ref{fig:r}), mostly
 as an introduction to very simple plots in =R=.
@@ -154,15 +178,19 @@ as an introduction to very simple plots in =R=.
 #+ATTR_LaTeX: width=0.5\textwidth
 #+CAPTION:    $\Rsq$ rises monotonically as a function of columns
 #+LABEL:    fig:r
-#+begin_src R :results output graphics :file inserts/graph1.png :width 800 :height 800 :session :tangle yes :exports both
-  n <- nrow(X2)
-  X.rnd <- random.mat(n, 70)
-  res <- rep(0, 70)
-  for(i in 1:70) {
-    X.ext <- cbind(X2, X.rnd[, 1:i])
+#+begin_src R :results output graphics :file inserts/graph1.png :width 500 :height 300 :session :tangle yes :exports both
+  n <- nrow(X2); k.max <- 70
+  X.rnd <- randomMat(n, k.max)
+  res <- rep(0, k.max)
+  
+  for (i in 1:70) {
+    X.ext <- cbind(X2, X.rnd[, seq(i)])
     res[i] <- R.squared(y, X.ext)
   }
-  plot(res)
+  
+  plot(res, type = "l", lwd = 3, col = "blue",
+       xlab = "num. of additional columns",
+       ylab = "R-squared value")
 #+end_src
 
 #+RESULTS:
@@ -173,3 +201,115 @@ a single draw for the random matrix.  We can calculate the
 relationship between $\Rsq$ and the number of cofactors --- or we can
 bootstrap an estimate for each index, which we will do in a subsequent
 section to illustrate bootstrapping in =R=.
+
+* Sum of squared residuals
+
+Suppose that $\b$ is the $2 \times 1$ least squared coefficient vector
+in the regression of $\y$ on $\X_2$.  Suppose that $\c$ is some other
+$2 \times 1$ vector.  We are asked to show that 
+\begin{equation}
+(\y - \X\c)^{\prime} (\y - \X\c) - (\y - \X\b)^{\prime} (\y - \X\b) = (\c - \b)^{\prime}
+\Xp \X (\c - \b)
+\label{eq:one}
+\end{equation}
+ We could prove this with matrix algebra. In fact,
+we are asked to prove this fact with matrix algebra in the problem
+set.  But matrix algebra is for chumps --- or very smart and kind
+people.  Let's check the equality using =R= by choosing any arbitrary
+$\c$.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  b <- solve(t(X2) %*% X2) %*% t(X2) %*% y
+  c <- c(-3, 5)
+#+end_src
+
+#+RESULTS:
+
+For simplicity of notation, define $\M$ and $\N$ to be the following:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  M <- y - X2 %*% b
+  N <- y - X2 %*% c
+#+end_src
+
+#+RESULTS:
+
+Now, we can check both sides of the equality:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  lhs <- floor(t(N) %*% N - t(M) %*% M)
+  rhs <- floor(t(c - b) %*% t(X2) %*% X2 %*% (c - b))
+  all(lhs == rhs)
+#+end_src
+
+#+RESULTS:
+: [1] TRUE
+
+Note, however, that the order of $\c$ and $\b$ doesn't matter:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  rhs.alt <- floor(t(b - c) %*% t(X2) %*% X2 %*% (b - c))
+  all(lhs == rhs.alt)
+#+end_src
+
+#+RESULTS:
+: [1] TRUE
+
+This result is because we are effectively looking at the sum of the
+squared difference between the two vectors.  The ordering in the
+difference calculation doesn't matter if it is subsequently squared.
+Consider the property $\V(\c\X) = \c\V(\X)\c^{\prime}$ for a vector
+$\c$ or $\V(a\X) = a^2\V(\X)$ for a scalar $a$.  The right-hand side
+of Equation (\ref{eq:eq}) is effectively a nested, squared matrix,
+which has to yield positive entries (and a postive scalar if the
+result is $1 \times 1$):
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+G <- X2 %*% (b - c)
+t(G) %*% G
+#+end_src
+
+#+RESULTS:
+:           [,1]
+: [1,] 818298074
+
+* Additional puzzles
+
+1. *Partitioned regression*: Generate a $100 \times 4$ matrix $\X$
+   /including/ a column of ones for the intercept. Additionally,
+   generate a vector $\y$ according to the generating process: $$y_i =
+   1 + x_{1i} + 2x_{2i} + 3x_{3i}  + \epsilon_i, $$ where
+   $\epsilon_i \sim N(0,1)$.  Let $\Q$ be the first three columns of $\X$
+   and let $\N$ be the final column.  In addition, let
+   \begin{eqnarray*}
+      \gho  &=& (\Qp\Q)^{-1}\Qp\y \and \f = \y - \Q\gho   \\
+      \ght  &=& (\Qp\Q)^{-1}\Qp\N \and \g = \N - \Q\ght   \\
+      \ghth &=& \f \cdot \g / ||\g||^2 \and \e = \f - \g \ghth 
+   \end{eqnarray*}
+   Show that $\hat{\beta} = [\gho - \ght\ghth \hspace{10pt}
+   \ghth]$. Note that the total dimension of $\hat{\beta}$ is 4.
+
+*Answer:* 
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  X <- cbind(1, randomMat(100, 3))
+  e <- rnorm(100)
+  
+  beta <- c(1, 1, 2, 3)
+  y <- X %*% beta + e
+  
+  Q <- X[, 1:3]
+  N <- X[, 4]
+  gamma.1 <- solve(t(Q) %*% Q) %*% t(Q) %*% y
+  gamma.2 <- solve(t(Q) %*% Q) %*% t(Q) %*% N
+  f <- y - Q %*% gamma.1
+  g <- N - Q %*% gamma.2
+  gamma.3 <- as.numeric(crossprod(f,g)/crossprod(g,g))
+  e <- f - g * gamma.3
+  
+  (b <- c(gamma.1 - gamma.2 * gamma.3, gamma.3))
+#+end_src
+
+#+results:
+: [1] 0.9406504 1.0952703 2.1492073 2.8091920
+
