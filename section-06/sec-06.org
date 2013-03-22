@@ -37,6 +37,10 @@
 #+LATEX: \renewcommand{\yhp}{\hat{{\bf y}}^{\prime}}
 #+LATEX: \renewcommand{\In}{{\bf I}_n}
 #+LATEX: \renewcommand{\sigs}{\sigma^{2}}
+#+LATEX: \renewcommand{\sn}[1]{\sum_{#1=1}^n}
+#+LATEX: \renewcommand{\like}{\mathscr{L}_n(\theta)}
+#+LATEX: \renewcommand{\sn}[1]{\sum_{#1=1}^n}
+#+LATEX: \renewcommand{\likepp}{\mathscr{L}^{\prime\prime}_n(\hat{\theta})}
 #+LATEX: \setlength{\parindent}{0in}
 #+STARTUP: fninline
 
@@ -70,6 +74,8 @@ observations.
   data <- na.omit(data)
 #+end_src
 
+#+RESULTS:
+
 A quick visualization reveals the distribution of wages in the data
 set:
 
@@ -92,6 +98,8 @@ measure of educational attainment from the =educ= variable.
   e4 <- ifelse(data$educ %in% 17:18, 1, 0)
 #+end_src
 
+#+results:
+
 The categorical education variables sum to one, and the =lm()=
 function will force-drop one of the variables.  Note that the
 intercept in this regression reflects the mean wage of the =e4= class.
@@ -99,15 +107,25 @@ The other coefficients reflect the relative wages of the other three
 classes.
 
 #+begin_src R :results output :exports both :tangle yes :session
+  lm(wage ~ 1 + e1 + e2 + e3 + e4, data = data)
   coef(summary(m1 <- lm(wage ~ 1 + e1 + e2 + e3 + e4, data = data)))
 #+end_src
 
 #+RESULTS:
-:               Estimate Std. Error   t value      Pr(>|t|)
-: (Intercept) 1196.95876   38.93314 30.743953 7.969254e-144
-: e1          -350.46396   42.67867 -8.211689  7.239709e-16
-: e2          -229.97111   49.22796 -4.671555  3.429280e-06
-: e3           -90.50748   47.64240 -1.899726  5.777793e-02
+#+begin_example
+
+Call:
+lm(formula = wage ~ 1 + e1 + e2 + e3 + e4, data = data)
+
+Coefficients:
+(Intercept)           e1           e2           e3           e4  
+    1196.96      -350.46      -229.97       -90.51           NA
+              Estimate Std. Error   t value      Pr(>|t|)
+(Intercept) 1196.95876   38.93314 30.743953 7.969254e-144
+e1          -350.46396   42.67867 -8.211689  7.239709e-16
+e2          -229.97111   49.22796 -4.671555  3.429280e-06
+e3           -90.50748   47.64240 -1.899726  5.777793e-02
+#+end_example
 
 Suppose we want to estimate the premium on education, relative to the
 least educated class.  We can then specify the following regression
@@ -122,7 +140,7 @@ examining the different ways to export tables.]:
 #+RESULTS:
 #+BEGIN_LaTeX
 % latex table generated in R 2.14.1 by xtable 1.7-0 package
-% Mon Jan 21 14:44:08 2013
+% Wed Mar  6 12:50:51 2013
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -191,7 +209,7 @@ non-parametric graphing comes in handy.
 #+CAPTION: Smoothed line
 #+LABEL: fig:line
 #+begin_src R :results output graphics :file inserts/fig2.png :width 800 :height 400 :session :tangle yes :exports both
-(g <- ggplot(data, aes(x=age, y=wage)) + geom_smooth(method="loess", size=1.5))
+  (g <- ggplot(data, aes(x=age, y=wage)) + geom_smooth(method="loess", size=1.5))
 #+end_src
 
 #+RESULTS:
@@ -205,9 +223,59 @@ relative to the short time frame of age.
 #+CAPTION: Smoothed line with points
 #+LABEL: fig:pts
 #+begin_src R :results output graphics :file inserts/fig3.png :width 800 :height 400 :session :tangle yes :exports both
-g + geom_point()
+  (g <- g + geom_point())
 #+end_src
 
 #+RESULTS:
 [[file:inserts/fig3.png]]
 
+* Maximum Likelihood
+
+Suppose that I tell you that $\X$ is a random vector, where each
+$\X_i$ is generated from a common density function $\theta / (\theta +
+\X_i)^2$.  We want to estimate $\theta$ by maximum likelihood, given
+the data set =mle.txt= from Freedman (2009).  It can be shown that the
+log-likelihood function is given by the following, where $n$ is the
+number of observations: $$\like = n \log \theta - 2 \sn{i}
+\log(\theta + \X_i)$$ First, we will plot the log-likelihood function
+as a function of $\theta$, and then find the maximum with =optimize=.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  data <- read.csv("mle.txt", header = FALSE)
+  data <- read.csv("http://dl.dropbox.com/u/5365589/mle.txt", header = FALSE)
+  
+  logLik <- function(theta, X = data) {
+    n <<- nrow(X)
+    n * log(theta) - 2 * sum(log(theta + X))
+  }
+#+end_src  
+
+#+RESULTS:
+
+To maximize this function with respect to $\theta$, we don't have to
+do any math.  And in fact, for this function, there is no explicit
+function for the maximum likelihood estimate, and we have to find the
+estimate through numerical optimization.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  optimize(logLik, interval=c(-100, 100), maximum=TRUE)
+  suppressWarnings(opt <- optimize(logLik, interval=c(-100, 100), maximum=TRUE))
+  (theta.hat <- opt$maximum)
+#+end_src  
+
+#+RESULTS:
+: [1] 22.50976
+
+We can compute the asymptotic variance in a variety of ways, but
+perhaps the most direct is $[- \likepp]^{-1}$:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  dd.logLik <- function(theta, X = data) {
+    -1 * (n / theta^2) + 2 * sum(1 / (theta + X)^2)
+  }
+  
+  (asy.var <- -1 / dd.logLik(theta.hat))
+#+end_src  
+
+#+RESULTS:
+: [1] 30.12326

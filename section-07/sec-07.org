@@ -44,14 +44,15 @@
 \textbf{Generalized Least Squares and} \texttt{ggplot} \hfill
 *ARE212*: Section 07 \\ \\
 
-This section will briefly walk through two general concepts, one
-econometric and one =R= oriented.  We will examine the characteristics
-of generalized least squares (GLS), and specifically the efficiency
-gains from a special case of GLS, weighted least squares (WLS).  This
-is the econometric concepts.  We will then recreate the graphs from
-Figures 2.6 and 2.7, roughly, in the notes using =ggplot2= a very
-popular, very powerful graphing package in =R=.  This is part is
-optional, especially since it is only a very brief treatment of the
+This section will briefly outline two general concepts, GLS and
+=ggplot=.  As an addendum, we will go over the recurring =R= questions
+that cropped up during the midterm.  We will examine the
+characteristics of generalized least squares (GLS), and specifically
+the efficiency gains from a special case of GLS, weighted least
+squares (WLS).  This is the econometric concepts.  We will then
+recreate the graphs from Figures 2.6 and 2.7, roughly, in the notes
+using =ggplot2= a very popular graphing package in =R=.  This is part
+is optional, especially since it is only a very brief treatment of the
 package --- there is a lot more to learn. \\
 
 Let $x \sim U(0,2000)$ and $\epsilon \sim N(0,(x/1000)^2)$.  The
@@ -83,7 +84,7 @@ this section, rather than both parameters.
 #+end_src
 
 #+RESULTS:
-: [1] 1.50004
+: [1] 1.50002
 
 Let's package this into a function, called =rnd.beta=, so that we can
 collect the OLS parameter for an arbitrary number of random samples,
@@ -91,15 +92,15 @@ noting that $n$ is a constant so we may as well keep it out of the
 function so that $1000$ is not reassigned thousands of times to $n$.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-rnd.beta <- function(i) {
-  x <- runif(n)
-  eps <- rnorm(n, 0, sqrt(x/10))
-  y <- 0.5 + x*1.5 + eps
-  X <- cbind(1, x)
-  params <- solve(t(X) %*% X) %*% t(X) %*% y
-  beta <- params[2]
-  return(beta)
-}
+  rnd.beta <- function(i) {
+    x <- runif(n)
+    eps <- rnorm(n, 0, sqrt(x/10))
+    y <- 0.5 + x * 1.5 + eps
+    X <- cbind(1, x)
+    params <- solve(t(X) %*% X) %*% t(X) %*% y
+    beta <- params[2]
+    return(beta)
+  }
 #+end_src
 
 #+RESULTS:
@@ -113,8 +114,8 @@ estimated $\bh$ from a a different random sample for each call:
 #+end_src
 
 #+RESULTS:
-: [1] 1.512709
-: [1] 1.548704
+: [1] 1.515967
+: [1] 1.495362
 
 This is convenient for bootstrapping without loops, but rather
 applying the function to a list of effective indices.[fn:: This is
@@ -131,7 +132,7 @@ typos.} Now replicating the process for $B$ draws is straightforward:
 #+end_src
 
 #+RESULTS:
-: [1] 1.499715
+: [1] 1.501141
 
 Alright.  Looking good.  The average of the simulated sample is much
 closer to $\beta$ than any individual call of =rnd.beta=, suggesting
@@ -142,8 +143,8 @@ that returns the WLS estimates.
 #+begin_src R :results output graphics :exports both :tangle yes :session
 rnd.wls.beta <- function(i) {
   x <- runif(n)
-  y <- 0.5 + x*1.5 + rnorm(n, 0, sqrt(x/10))
-  C <- diag(1/sqrt(x/10))
+  y <- 0.5 + x * 1.5 + rnorm(n, 0, sqrt(x / 10))
+  C <- diag(1 / sqrt(x / 10))
   y.wt <- C %*% y
   X.wt <- C %*% cbind(1, x)
   param.wls <- solve(t(X.wt) %*% X.wt) %*% t(X.wt) %*% y.wt
@@ -172,4 +173,89 @@ graphing package called =ggplot2=.
 
 #+RESULTS:
 [[file:inserts/hist.png]]
+
+* A review of loops, a loopy review
+
+There were many questions about =R= code on the midterm, and
+especially code that will traverse a sequence of indices.  There are
+many ways to loop over a sequence and iterate on a function --- and we
+do this a lot in ARE212 to examine the behavior of different
+estimators.  I used =sapply()= to iterate over a sequence.  There are
+other ways to do this.  Let's consider an equivalent for-loop.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  res <- rep(NA, B)
+  for (i in seq(B)) {
+    res[i] <- rnd.wls.beta(i)
+  }
+  print(head(res))
+#+end_src
+
+#+results:
+: [1] 1.489108 1.491555 1.511507 1.500539 1.499187 1.513985
+
+This is fine.  It works.  You have to pay attention, however, to the
+expressed indices instead of using them for implicit increments; and
+you have to preallocate a results vector which also can get confusing
+over large, sprawling projects.  Also, there are more lines of code
+(LOC) which is often used as a metric for inefficiency.  \\
+
+Another thing that might help avoid loops is something called
+/vectorized operations/.  Instead of looping through indices, is there
+a way to formulate the problem in terms of element-wise operations?
+Suppose, for example, that I want to generate a binary vector that
+indicates whether the value in one variable exceeds the value in
+another.  
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  x <- rnorm(10); y <- rnorm(10)
+  (D <- ifelse(x > y, 1, 0))
+#+end_src  
+
+#+RESULTS:
+:  [1] 0 1 1 0 0 0 0 1 1 0
+
+The function =ifelse()= operates on each individual element of the
+equal-length =x= and =y= vectors.  No looping necessary.  This comes
+up a lot; and you should definitely make use of (and document) this
+behavior when available.  This doesn't always work, however,
+especially when we are trying to generate a random vector.  Suppose we
+want to create a vector where the elements are pulled from different
+distributions, depending on the value of =D=.
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  factor(x <- ifelse(D == 1, runif(1), rnorm(1)))
+#+end_src  
+
+#+RESULTS:
+:  [1] 0.146645265993786   0.00228817900642753 0.00228817900642753
+:  [4] 0.146645265993786   0.146645265993786   0.146645265993786  
+:  [7] 0.146645265993786   0.00228817900642753 0.00228817900642753
+: [10] 0.146645265993786  
+: Levels: 0.00228817900642753 0.146645265993786
+
+What happened?  There are only two values in this vector.  The random
+value was generated before the vectorized boolean check.  This is
+equivalent, then, to the code by which we generated =D= in the first
+place.  To fix this problem, we may have to apply the function to each
+value within the reference vector:
+
+#+begin_src R :results output graphics :exports both :tangle yes :session
+  randme <- function(d) {
+    if (d == 1) {
+      r <- runif(1)
+    } else {
+      r <- rnorm(1)
+    }
+    return(r)
+  }
+  
+  factor(x <- sapply(D, randme))
+#+end_src
+
+#+RESULTS:
+:  [1] 0.543270648227914 0.884922229452059 0.823565670987591 1.53072632559514 
+:  [5] 1.7373434134277   -1.49254774679705 -2.69941973822134 0.788265040842816
+:  [9] 0.145140470471233 0.40991024630861 
+: 10 Levels: -2.69941973822134 -1.49254774679705 ... 1.7373434134277
 

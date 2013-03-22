@@ -186,7 +186,7 @@ the joint test.  Simplification failed.  Let's try again.
 #+end_src
 
 #+RESULTS:
-: [1] 1.473982e+01 4.424878e-06
+: [1] 14.7398154  0.9999956
 
 It worked!  And the probability of observing the F-statistic with
 degrees of freedom $J=2$ and $n-k = 71$ is printed as well.  
