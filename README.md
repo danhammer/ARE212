@@ -45,7 +45,7 @@ The sections are organized as follows:
 
 [`section-07`](https://github.com/danhammer/ARE212/tree/master/section-07) Efficiency of GLS and `ggplot2`
 
-[`section-08`](https://github.com/danhammer/ARE212/tree/master/section-08) Large sample properties of OLS
+[`section-08`](https://github.com/danhammer/ARE212/tree/master/section-08) Instrumental Variables
 
 [`section-09`](https://github.com/danhammer/ARE212/tree/master/section-09) Testing for heteroskedasticity
 

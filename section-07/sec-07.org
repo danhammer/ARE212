@@ -114,8 +114,8 @@ estimated $\bh$ from a a different random sample for each call:
 #+end_src
 
 #+RESULTS:
-: [1] 1.515967
-: [1] 1.495362
+: [1] 1.471441
+: [1] 1.486697
 
 This is convenient for bootstrapping without loops, but rather
 applying the function to a list of effective indices.[fn:: This is
@@ -126,7 +126,7 @@ within a =for= loop; the code is more readable and less prone to
 typos.} Now replicating the process for $B$ draws is straightforward:
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-  B <- 1000
+  B <- 100
   beta.vec <- sapply(1:B, rnd.beta)
   mean(beta.vec)
 #+end_src
@@ -141,17 +141,17 @@ appropriately centered.  Now, let's create another, similar function
 that returns the WLS estimates.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
-rnd.wls.beta <- function(i) {
-  x <- runif(n)
-  y <- 0.5 + x * 1.5 + rnorm(n, 0, sqrt(x / 10))
-  C <- diag(1 / sqrt(x / 10))
-  y.wt <- C %*% y
-  X.wt <- C %*% cbind(1, x)
-  param.wls <- solve(t(X.wt) %*% X.wt) %*% t(X.wt) %*% y.wt
-  beta <- param.wls[2]
-  return(beta)
-}
-wls.beta.vec <- sapply(1:B, rnd.wls.beta)
+  rnd.wls.beta <- function(i) {
+    x <- runif(n)
+    y <- 0.5 + x * 1.5 + rnorm(n, 0, sqrt(x / 10))
+    C <- diag(1 / sqrt(x / 10))
+    y.wt <- C %*% y
+    X.wt <- C %*% cbind(1, x)
+    param.wls <- solve(t(X.wt) %*% X.wt) %*% t(X.wt) %*% y.wt
+    beta <- param.wls[2]
+    return(beta)
+  }
+  wls.beta.vec <- sapply(1:B, rnd.wls.beta)
 #+end_src
 
 #+RESULTS:
@@ -186,7 +186,7 @@ other ways to do this.  Let's consider an equivalent for-loop.
 #+begin_src R :results output graphics :exports both :tangle yes :session
   res <- rep(NA, B)
   for (i in seq(B)) {
-    res[i] <- rnd.wls.beta(i)
+    res[i] <- rnd.wls.beta()
   }
   print(head(res))
 #+end_src
@@ -245,7 +245,7 @@ value within the reference vector:
     if (d == 1) {
       r <- runif(1)
     } else {
-      r <- rnorm(1)
+      r <- rnorm(1, mean = 100, sd = 19)
     }
     return(r)
   }
@@ -254,8 +254,9 @@ value within the reference vector:
 #+end_src
 
 #+RESULTS:
-:  [1] 0.543270648227914 0.884922229452059 0.823565670987591 1.53072632559514 
-:  [5] 1.7373434134277   -1.49254774679705 -2.69941973822134 0.788265040842816
-:  [9] 0.145140470471233 0.40991024630861 
-: 10 Levels: -2.69941973822134 -1.49254774679705 ... 1.7373434134277
+:  [1] 0.545478682033718 97.0212761082557  0.589886064874008 0.781325699063018
+:  [5] 108.67800788386   0.868332070531324 54.3405163802937  0.810937537113205
+:  [9] 0.857683679787442 101.00935385884  
+: 10 Levels: 0.545478682033718 0.589886064874008 ... 108.67800788386
 
+: 

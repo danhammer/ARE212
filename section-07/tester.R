@@ -7,3 +7,4 @@ for (i in 1:10) {
   hist(x, main = title)
   dev.off()
 }
+
