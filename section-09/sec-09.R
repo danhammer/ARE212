@@ -1,0 +1,41 @@
+
+library(maps)
+library(maptools)
+library(RColorBrewer)
+library(classInt)
+library(gpclib)
+library(mapdata)
+
+png(filename="inserts/us-mkts.png",height=800,width=800)
+data <- read.csv("../data/farmers-mkts.csv", header = TRUE)
+map("state", interior = FALSE)
+map("state", boundary = FALSE, col = "gray", add = TRUE)
+points(data$x, data$y, cex = 0.2, col = "blue")
+dev.off()
+
+statelist <- c("New Mexico", "Colorado", "Arizona", "Utah")
+state.data <- data[is.element(data$State, statelist), ]
+dim(state.data)
+
+X <- state.data[, 8:ncol(state.data)]
+X <- apply(X, 2, function(col) { ifelse(col == "Y", 1, 0) })
+X[1:6, c("Honey", "Jams", "Poultry")]
+
+cl <- kmeans(X, 4)
+names(cl)[1:3]
+
+nclr <- 4
+clr.set <- brewer.pal(nclr, "Set1")
+
+class <- classIntervals(cl$cluster, nclr, style = "pretty")
+colcode <- findColours(class, cl$cluster)
+
+png(filename="inserts/sel-mkts.png",height=800,width=800)
+map("state", interior = FALSE, 
+    xlim = c(-117, -101), ylim = c(28, 43))
+map("state", boundary = FALSE, col="gray", add = TRUE, 
+    xlim = c(-117, -101), ylim = c(28, 43))
+points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
+dev.off()
+
+cl$betweenss/cl$totss

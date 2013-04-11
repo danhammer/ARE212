@@ -8,3 +8,7 @@ residualMaker <- function(X) {
   M <- diag(nrow(X)) - X %*% solve(t(X) %*% X) %*% t(X)
   return(M)
 }
+
+
+X <- matrix(rnorm(100), 10)
+M <- diag(nrow(X)) - X %*% solve(t(X) %*% X) %*% t(X)

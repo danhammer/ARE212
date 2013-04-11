@@ -41,16 +41,16 @@
 #+STARTUP: fninline
 
 *Spatial Analysis in* \texttt{R} \hfill
-*ARE212*: Section 11 \\ \\
+*ARE212*: Section 9 \\ \\
 
-This is the fun (read: optional!) section to show how to manipulate
-and visualize spatial data in =R=.  It seems more fun to start with a
-data story; and work through some basic analysis. \\
+This is the fun section to show how to manipulate and visualize
+spatial data in =R=.  It seems more fun to start with a data story;
+and work through some basic analysis. \\
 
 Data.gov is a data repository administered by the US government with
 over 445,000 geographic data sets.  One dat set is the geographic
-coordinates and characteristics of 7,863 farmers marketsin the United
-States.[fn:: https://explore.data.gov/d/wfna-38ey] Suppose we are
+coordinates and characteristics of 7,863 farmers markets in the United
+States.[fn:: [[https://explore.data.gov/d/wfna-38ey][\texttt{https://explore.data.gov/d/wfna-38ey}]]] Suppose we are
 interested in examining the effect of state boundaries on the
 characteristics of farmers markets.  Do state boundaries have a
 substantive impact on the character of farmers markets, or are the no
@@ -82,10 +82,10 @@ The following code plots the map, and presents the results in Figure
 #+LABEL: fig:dens
 #+ATTR_LaTeX: width=0.6\textwidth
 #+begin_src R :results output graphics :file inserts/us-mkts.png :width 800 :height 800 :session :tangle yes :exports both 
-  data <- read.csv("../data/farmers-mkts.csv", header=TRUE)
+  data <- read.csv("../data/farmers-mkts.csv", header = TRUE)
   map("state", interior = FALSE)
   map("state", boundary = FALSE, col = "gray", add = TRUE)
-  points(data$x, data$y, cex = 0.2, col="blue")
+  points(data$x, data$y, cex = 0.2, col = "blue")
 #+end_src
 
 #+RESULTS:
@@ -94,13 +94,12 @@ The following code plots the map, and presents the results in Figure
 The distribution of farmers markets across the US is neat to see, but
 there are so many points that it is difficult to visually glean any
 useful information, as seen in the following figure.  So, instead,
-lets only consider the farmers markets in Colorado, Utah, New Mexico,
-and Arizona.  There are 354 farmers markets in these four states.
+let's consider farmers markets in Colorado, Utah, New Mexico, and
+Arizona.  There are 354 farmers markets in these four states.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   statelist <- c("New Mexico", "Colorado", "Arizona", "Utah")
-  idx <- is.element(data$State, statelist) 
-  state.data <- data[idx, ]
+  state.data <- data[is.element(data$State, statelist), ]
   dim(state.data)
 #+end_src
 
@@ -113,31 +112,35 @@ binary variables with entries \texttt{"Y"} or \texttt{"N"}, indicating
 whether the market sells cheese, for example, or accepts credit cards.
 These are the attributes of interest.  The idea is whether we can
 predict the state of the farmers market, purely based on the
-characteristics.  If so, then the state boundaries are correlated with
-the attributes for some reason --- which is not included in the scope
-of this example.  We can extract these characteristics into a matrix
-$\X$ and recode the string variables to 0-1 binary variables.  Note
-that the default numeric levels of the string variables are 2 and 3,
-so subtracting 2 will yield the desired result.
+characteristics.  We can extract these characteristics into a matrix
+$\X$ and recode the string variables to 0-1 binary variables. Note
+that the rows are still labelled according to the countrywide index of
+the farmers market.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   X <- state.data[, 8:ncol(state.data)]
-  for(i in names(X)) {
-    X[[i]] <- as.numeric(X[[i]]) - 2
-  }
+  X <- apply(X, 2, function(col) { ifelse(col == "Y", 1, 0) })
+  X[1:6, c("Honey", "Jams", "Poultry")]
 #+end_src
 
 #+RESULTS:
+:    Honey Jams Poultry
+: 23     0    0       0
+: 52     0    0       0
+: 53     0    0       0
+: 54     1    1       0
+: 76     0    0       0
+: 77     1    1       1
 
-We want to categorize the markets based on their characteristics into
-four distinct buckets, indicating one of the four states.  For this,
-we can use K-Means clustering, which is a simple call in =R=.  The
-resulting object =cl= is a list with various output attributes of
-the clustering, including to which of the four clusters each market
-was assigned, indicated by =cl$cluster=.  This is the vector we
-will use to color the points on the map.  There are many other
-attributes that are collected in =cl=; three of them are listed
-below.
+We want to categorize the markets based on the market features.
+Specifically, we would like to tag each market with one of the four
+states, or four distinct buckets. For this, we can use K-Means
+clustering, which is a simple call in =R=.  The resulting object =cl=
+is a list with various output attributes of the clustering, including
+to which of the four clusters each market was assigned, indicated by
+=cl$cluster=.  This is the vector we will use to color the points on
+the map.  There are many other attributes that are collected in =cl=;
+three of them are listed below.
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
   cl <- kmeans(X, 4)
@@ -186,20 +189,59 @@ that the extent is limited by a latitude-longitude bounding box.
       xlim = c(-117, -101), ylim = c(28, 43))
   map("state", boundary = FALSE, col="gray", add = TRUE, 
       xlim = c(-117, -101), ylim = c(28, 43))
-  points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
+  points(state.data$x, state.data$y, pch = 16, col = colcode, cex = 1)
 #+end_src
 
 #+RESULTS:
 [[file:inserts/sel-mkts.png]]
 
 This is cool.  It is clear that there is some separable variation in
-the characteristics of the markets.  The red points seem to be
-clustered in New Mexico, the lower-right state.  Even markets right
-across the border have characteristics that are different enough to
-"correctly" cluster them by state.  There must be something about
-state regulations that are particularly imposing in New Mexico. \\
+the characteristics of the markets.  Even markets right across the
+border have characteristics that are different enough to "correctly"
+cluster them by state.  There must be something about state
+regulations that are particularly imposing in New Mexico.  To validate
+this observation, we can calculate the proportion of the total
+variance that can be explained by the clustering.
 
-This is just one of many neat examples about how to use =R= to
-examine spatial variation; and to effectively uncover some spatial,
-data generating processes that are not obvious from looking at the
-data in a matrix or spreadsheet.  More to come!
+#+begin_src R :results output :exports both :tangle yes :session
+  cl[["betweenss"]] / cl[["totss"]]
+#+end_src
+
+#+RESULTS:
+: [1] 0.5952912
+
+K-means clustering minimizes the within-group sum of squared errors by
+effectively maximizing the between group sum of squares.  We have
+achieved a 60% reduction in the sum of squares through clustering.
+Further evaluation of the fit is probably beyond the scope of this
+section.  Scratch that, I am leading this section, so I can say for
+certain that it is beyond the scope of this section.  Boom.  The
+purpose of this section, anyway, was just to introduce the mapping
+facilities in =R=, available geospatial data, and some basic analysis
+outside the scope of econometrics.\\
+
+One last thing, though: Suppose we wanted to find out whether the
+likelihood of selling certain products at market is related to the
+latitude, conditional on the longitude.  In otherwords, suppose we
+wanted to identify whether cheese is sold more often in the North than
+in the South.  Try this (but don't read into it too much):
+
+#+begin_src R :results output :exports both :tangle yes :session
+  cheese.model <- glm(Cheese ~ 1 + x + y, data = data, family = "binomial")
+  coef(summary(cheese.model))
+#+end_src
+
+#+RESULTS:
+:                Estimate  Std. Error   z value     Pr(>|z|)
+: (Intercept) -0.99920466 0.260410677 -3.837034 1.245292e-04
+: x            0.00790756 0.001485875  5.321821 1.027336e-07
+: y            0.01948108 0.005278786  3.690447 2.238602e-04
+
+I guess you'd conclude that as you move north and west, more cheese is
+sold; but there is likely a lot more to it than this.  We will explore
+the data a bit more in section.\\
+
+This is just one of many neat examples about how to use =R= to examine
+spatial variation; and to effectively uncover some spatial data
+generating processes that are not obvious from looking at the data in
+a matrix or spreadsheet.  More to come!
