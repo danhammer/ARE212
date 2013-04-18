@@ -30,21 +30,23 @@
 *ARE212*: Section 14 \\ \\
 
 The purpose of this section is to showcase the ability to scrape and
-process web data using =R=.  This tutorial draws heavily from a [[http://schamberlain.github.com/2012/08/get-ecoevo-journal-titles/][post]]
-on a great blog by Pascal Mickelson and Scott Chamberlain, two
-biologists and experienced =R= users. Suppose we want to find the
-number of available environmental economics journals.  There are too
-many.  Definitely.  But suppose we want to find out just how many.  To
-do this, we can visit crossref.org, which is a citation-linking
-network with a list of all journals and their Digital Object
-Identifiers (DOIs).  We will query the list from within =R= and then
-parse the returned content to list journals with certain attributes.
-For this, we'll need to load the following libraries:
+process web data using =R=.  The section notes draw heavily from a
+[[http://schamberlain.github.com/2012/08/get-ecoevo-journal-titles/][post]] on a great blog by Pascal Mickelson and Scott Chamberlain, two
+biologists and experienced =R= users.\\
+
+Suppose we want to find the number of available economics journals.
+There are too many.  Definitely.  But suppose we want to find out just
+how many.  To do this, we can visit crossref.org, which is a
+citation-linking network with a list of all journals and their Digital
+Object Identifiers (DOIs).  We will query the list from within =R= and
+then parse the returned content to list journals with certain
+attributes.  For this, we'll need to load the following libraries:
 
 #+begin_src R :results output silent :exports both :tangle yes :session
 library(XML)
 library(RCurl)
 library(stringr)
+options(show.error.messages = FALSE)
 #+end_src
 
 The next step is to repeatedly query crossref.org for journal titles.
@@ -60,24 +62,31 @@ The final results are stored in =nameslist=.
 #+begin_src R :results none :exports code :tangle yes
   token <- "characters"
   nameslist <- list()
-  options(show.error.messages = FALSE)
+  
   while (is.character(token) == TRUE) {
-      baseurl <- "http://oai.crossref.org/OAIHandler?verb=ListSets"
-      if (token == "characters") {
-        tok2 <- NULL
-      } else {
-        tok2 <- paste("&resumptionToken=", token, sep = "")
-      }
-      query <- paste(baseurl, tok2, sep = "")
-      crsets <- xmlToList(xmlParse(getURL(query)))
-      names <- as.character(sapply(crsets[[4]], function(x) x[["setName"]]))
-      nameslist[[token]] <- names
-      if (class(try(crsets[[2]]$.attrs[["resumptionToken"]])) == "try-error") {
-          stop("no more data")
-      }
-      else {
-        token <- crsets[[2]]$.attrs[["resumptionToken"]]
-      }
+  
+    baseurl <- "http://oai.crossref.org/OAIHandler?verb=ListSets"
+  
+    if (token == "characters") {
+      tok.follow <- NULL
+    } else {
+      tok.follow <- paste("&resumptionToken=", token, sep = "")
+    }
+  
+    query <- paste(baseurl, tok.follow, sep = "")
+  
+    xml.query <- xmlParse(getURL(query))
+    set.res <- xmlToList(xml.query)
+    names <- as.character(sapply(set.res[["ListSets"]], function(x) x[["setName"]]))
+    nameslist[[token]] <- names
+    
+    if (class(try(set.res[["request"]][[".attrs"]][["resumptionToken"]])) == "try-error") {
+      stop("no more data")
+    }
+    else {
+      token <- set.res[["request"]][[".attrs"]][["resumptionToken"]]
+    }
+    
   }
 #+end_src
 
@@ -105,12 +114,12 @@ length(econtitles)
 #+end_src
 
 #+RESULTS:
-: [1] 440
+: [1] 461
 
 What in the hell?  So many!  I suppose that this is a good thing: at
-least one of the 440 journals should accept my crappy papers.  If I
+least one of the 461 journals should accept my crappy papers.  If I
 blindly throw a dart in a bar, it may not hit the dartboard, but it
-will almost certainly hit one of the 440 patrons.  Here is a random
+will almost certainly hit one of the 461 patrons.  Here is a random
 sample of ten journals:
 
 #+begin_src R :results output graphics :exports both :tangle yes :session
