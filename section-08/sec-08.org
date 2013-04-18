@@ -1,4 +1,4 @@
-#+AUTHOR:     
+S#+AUTHOR:     
 #+TITLE:      
 #+OPTIONS:     toc:nil num:nil 
 #+LATEX_HEADER: \usepackage{mathrsfs}
@@ -268,7 +268,7 @@ est.bias(vcov)
 The parameter estimates seem fairly consistent.  The simulated bias is
 negligible.  The standard errors in the simulation are somewhat
 larger, however, simply because there is more variation in the
-composite error term.  Now suppose that $\rho_{23} = \rho_{3z} = 0.5$,
+composite error term.  Now suppose that $\rho_{23} = \rho_{2z} = 0.5$,
 so that $\E[\eps_i|x_{1i}, x_{2i}] \neq 0$.  The coefficient $\beta_2$
 is biased upwards by 0.5 in the simulation below (the magnitude of the
 correlation and parameter bias are not generally the same).

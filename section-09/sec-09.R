@@ -1,4 +1,3 @@
-
 library(maps)
 library(maptools)
 library(RColorBrewer)
@@ -30,12 +29,28 @@ clr.set <- brewer.pal(nclr, "Set1")
 class <- classIntervals(cl$cluster, nclr, style = "pretty")
 colcode <- findColours(class, cl$cluster)
 
+classify.colors <- function(x) {
+  if (x == 1) {
+    return(colcode[1])
+  } else if (x == 2) {
+    return(colcode[2])
+  } else if (x == 3) {
+    return(colcode[3])
+  } else if (x == 4) {
+    return(colcode[4])
+  }
+}
+
+
 png(filename="inserts/sel-mkts.png",height=800,width=800)
 map("state", interior = FALSE, 
     xlim = c(-117, -101), ylim = c(28, 43))
 map("state", boundary = FALSE, col="gray", add = TRUE, 
     xlim = c(-117, -101), ylim = c(28, 43))
-points(state.data$x, state.data$y, pch = 16, col= colcode, cex = 1)
+points(state.data$x, state.data$y, pch = 16, col = colcode, cex = 1)
 dev.off()
 
-cl$betweenss/cl$totss
+cl[["betweenss"]] / cl[["totss"]]
+
+cheese.model <- glm(Cheese ~ 1 + x + y, data = data, family = "binomial")
+coef(summary(cheese.model))
