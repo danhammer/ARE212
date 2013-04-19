@@ -3,50 +3,10 @@ library(XML)
 library(RCurl)
 library(stringr)
 
-token <- "character"
-nameslist <- list()
 options(show.error.messages = FALSE)
-
-i <- 1
-
-while (is.character(token) == TRUE) {
-
-  baseurl <- "http://oai.crossref.org/OAIHandler?verb=ListSets"
-
-  if (token == "character") {
-    tok2 <- NULL
-  } else {
-    tok2 <- paste("&resumptionToken=", token, sep = "")
-  }
-
-  query <- paste(baseurl, tok2, sep = "")
-  return.xml  <- xmlParse(getURL(query))
-  return.list <- xmlToList(return.xml)
-  journal.vec <- return.list[["ListSets"]]
-  
-  names <- as.character(sapply(journal.vec, function(x) x[["setName"]]))
-  nameslist[[token]] <- names
-
-  if (class(try(journal.vec[[2]]$.attrs[["resumptionToken"]])) == "try-error") {
-    stop("no more data")
-  } else {
-    token <- crsets[[2]]$.attrs[["resumptionToken"]]
-  }
-
-  print(i <- i + 1)
-}
-
-allnames <- do.call(c, nameslist)
-length(allnames)
-
-econtitles <- as.character(allnames[str_detect(allnames, "^[Ee]conomic|\\s[Ee]conomic")])
-length(econtitles)
-
-sample(econtitles, 10)
 
 token <- "characters"
 nameslist <- list()
-options(show.error.messages = FALSE)
 
 while (is.character(token) == TRUE) {
 
@@ -73,3 +33,26 @@ while (is.character(token) == TRUE) {
   }
   
 }
+
+allnames <- do.call(c, nameslist)
+length(allnames)
+
+econtitles <- as.character(allnames[str_detect(allnames, "^[Ee]conomic|\\s[Ee]conomic")])
+length(econtitles)
+
+sample(econtitles, 10)
+
+countJournals <- function(regex) {
+  titles <- as.character(allnames[str_detect(allnames, regex)])
+  return(length(titles))
+}
+
+subj = c("economic", "business", "politic", "environment", "engineer", "history")
+regx = c("^[Ee]conomic|\\s[Ee]conomic", "^[Bb]usiness|\\s[Bb]usiness",
+  "^[Pp]olitic|\\s[Pp]olitic", "^[Ee]nvironment|\\s[Ee]nvironment",
+  "^[Ee]ngineer|\\s[Ee]ngineer", "^[Hh]istory|\\s[Hh]istory")
+
+subj.df <- data.frame(subject = subj, regex = regx)
+
+subj.df[["count"]] <- sapply(as.character(subj.df[["regex"]]), countJournals)
+(g <- ggplot(data = subj.df, aes(x = subject, y = count)) + geom_bar())

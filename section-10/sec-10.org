@@ -46,18 +46,21 @@ attributes.  For this, we'll need to load the following libraries:
 library(XML)
 library(RCurl)
 library(stringr)
+
 options(show.error.messages = FALSE)
 #+end_src
 
-The next step is to repeatedly query crossref.org for journal titles.
-Try to copy and paste the base URL address (=baseurl=) into your
-browser: =http://oai.crossref.org/OAIHandler?verb=ListSets=.  The
-result is a long XML form.  The function =getURL= in the following
-code pulls this response into =R= as a string, and the outer functions
-=xmlParse= and =xmlToList= convert the output into an =R= data
-structure.  There are too many entries to fit into a single query, so
-the =while= loop continues to query until there are no more results.
-The final results are stored in =nameslist=.
+Note the useful option for code with loops, especially loops over
+remote queries, to globally suppress error messages.  The next step is
+to repeatedly query crossref.org for journal titles.  Try to copy and
+paste the base URL address (=baseurl=) into your browser:
+=http://oai.crossref.org/OAIHandler?verb=ListSets=.  The result is a
+long XML form.  The function =getURL= in the following code pulls this
+response into =R= as a string, and the outer functions =xmlParse= and
+=xmlToList= convert the output into an =R= data structure.  There are
+too many entries to fit into a single query, so the =while= loop
+continues to query until there are no more results.  The final results
+are stored in =nameslist=.  We will review the code in section.
 
 #+begin_src R :results none :exports code :tangle yes
   token <- "characters"
@@ -94,13 +97,14 @@ How many journal titles are collected by this query?  We first
 concatenate the results into a single list, and then find the total
 length:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src R :results none :exports code :tangle yes
   allnames <- do.call(c, nameslist)
   length(allnames)
 #+end_src
 
-#+RESULTS:
+#+begin_example
 : [1] 27289
+#+end_example
 
 Now, suppose that we are looking for just those journals with
 /economic/ in the title.  We rely on regular expressions, a common way
@@ -108,13 +112,14 @@ to parse strings, from within =R=.  The following code snippet detects
 strings with some variant of /economic/, both lower- and upper-case,
 and selects those elements from within the =allnames= list.
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src R :results none :exports code :tangle yes
 econtitles <- as.character(allnames[str_detect(allnames, "^[Ee]conomic|\\s[Ee]conomic")])
 length(econtitles)
 #+end_src
 
-#+RESULTS:
+#+begin_example
 : [1] 461
+#+end_example
 
 What in the hell?  So many!  I suppose that this is a good thing: at
 least one of the 461 journals should accept my crappy papers.  If I
@@ -122,11 +127,10 @@ blindly throw a dart in a bar, it may not hit the dartboard, but it
 will almost certainly hit one of the 461 patrons.  Here is a random
 sample of ten journals:
 
-#+begin_src R :results output graphics :exports both :tangle yes :session
+#+begin_src R :results none :exports code :tangle yes 
 sample(econtitles, 10)
 #+end_src
 
-#+RESULTS:
 #+begin_example
  [1] "Computer Science in Economics and Management"    
  [2] "Advances in Theoretical Economics"               
@@ -140,3 +144,46 @@ sample(econtitles, 10)
 [10] "African Journal of Economic Policy"
 #+end_example
 
+What are other things we can do with the data?  Suppose we wanted to
+compare the relative frequencies of different subjects within journal
+titles.  This offers a decent example for section, since we can
+refactor some of the code we already developed --- a useful skill for
+writing clean code.  We have already figured out how to count the
+number of journals for a particular regular expression.  We can
+refactor the code into the following function, which accepts a regular
+expression and returns the length of the collection containint
+matching strings:
+
+#+begin_src R :results none :exports code :tangle yes 
+countJournals <- function(regex) {
+  titles <- as.character(allnames[str_detect(allnames, regex)])
+  return(length(titles))
+}
+#+end_src
+
+Now the tedious process of converting a list of subjects into the
+appropriate regular expressions.  If we have time, we'll write a
+function to do this conversion for us:
+
+#+begin_src R :results none :exports code :tangle yes 
+  subj = c("economic", "business", "politic", "environment", "engineer", "history")
+  regx = c("^[Ee]conomic|\\s[Ee]conomic", "^[Bb]usiness|\\s[Bb]usiness",
+    "^[Pp]olitic|\\s[Pp]olitic", "^[Ee]nvironment|\\s[Ee]nvironment",
+    "^[Ee]ngineer|\\s[Ee]ngineer", "^[Hh]istory|\\s[Hh]istory")
+  
+  subj.df <- data.frame(subject = subj, regex = regx)
+#+end_src
+
+Finally, we simply apply our refactored function to the regular
+expressions, and graph the result:
+
+#+begin_src R :results none :exports code :tangle yes 
+  subj.df[["count"]] <- sapply(as.character(subj.df[["regex"]]), countJournals)
+  (g <- ggplot(data = subj.df, aes(x = subject, y = count)) + geom_bar())
+#+end_src
+
+\begin{figure}[htb]
+   \centering
+   \includegraphics[width=0.5\textwidth]{images/bar-graph.png}
+   \caption{Journal count by subject search}
+\end{figure}
