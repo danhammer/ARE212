@@ -56,3 +56,13 @@ subj.df <- data.frame(subject = subj, regex = regx)
 
 subj.df[["count"]] <- sapply(as.character(subj.df[["regex"]]), countJournals)
 (g <- ggplot(data = subj.df, aes(x = subject, y = count)) + geom_bar())
+
+convertTopic <- function(s) {
+  ## accepts a topic as a string and returns the appropriate regular
+  ## expression
+  first.letter <- substr(s, 1, 1)
+  upper.case <- toupper(first.letter)
+  replacement.str <- paste("[", upper.case, first.letter, "]", sep="")
+  res <- paste(replacement.str, substring(s, 2), sep="")
+  return(res)
+}
