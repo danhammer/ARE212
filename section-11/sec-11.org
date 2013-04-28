@@ -55,6 +55,8 @@ contains the variable names.
   names(raw.data) <- col.names
 #+END_SRC
 
+#+results:
+
 As always, there are many ways to clean the data, especially having
 been exported by Stata, but we will use this as an opportunity to
 practice the =lapply()= function.[fn:: The easiest way is to read in a
@@ -67,7 +69,7 @@ employing the built-in =na.omit()= function to drop rows with any =NA=
 values:
 
 #+BEGIN_SRC R :results output :exports both :tangle yes :session
-  list.data <- lapply(data, function(x) { replace(x, x == ".", NA) } )
+  list.data <- lapply(raw.data, function(x) { replace(x, x == ".", NA) } )
   df <- na.omit(as.data.frame(list.data))
 #+END_SRC
 
@@ -84,7 +86,7 @@ as we normally would:
 #+CAPTION: Descriptive histograms
 #+LABEL: fig:hist
 #+begin_src R :results output graphics :file inserts/hist.png :width 700 :height 500 :session :tangle yes :exports both 
-  par(mfrow=c(2,2))
+ par(mfrow=c(2,2))
   graph.cols <- c("lwage", "educ", "exper", "expersq")
 
   for(var in graph.cols) {
@@ -93,8 +95,9 @@ as we normally would:
   }
 #+END_SRC
 
-#+RESULTS:
+#+results:
 [[file:inserts/hist.png]]
+
 
 Another quick note: The code is much more readable if you separate
 your functions with a break between lines.  That is, do not do this:

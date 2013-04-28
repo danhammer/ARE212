@@ -26,6 +26,9 @@ names(cl)[1:3]
 nclr <- 4
 clr.set <- brewer.pal(nclr, "Set1")
 
+h <- hclust(dist(X, method = "binary"))
+c <- cutree(h, k = 5)
+
 class <- classIntervals(cl$cluster, nclr, style = "pretty")
 colcode <- findColours(class, cl$cluster)
 

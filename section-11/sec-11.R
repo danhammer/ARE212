@@ -10,7 +10,7 @@ col.names <- c("id", "nearc2", "nearc4", "educ", "age", "fatheduc",
 
 names(raw.data) <- col.names
 
-list.data <- lapply(data, function(x) { replace(x, x == ".", NA) } )
+list.data <- lapply(raw.data, function(x) { replace(x, x == ".", NA) } )
 df <- na.omit(as.data.frame(list.data))
 
 png(filename="inserts/hist.png",height=500,width=700)
